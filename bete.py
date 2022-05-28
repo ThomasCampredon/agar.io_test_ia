@@ -70,6 +70,12 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         self.rect.height = self.radius * 2
         self.rect.width = self.radius * 2
 
+    def update_detection(self):
+        """
+        On met à jour la position de la hitbox
+        """
+        self.rect.center = (self.x(), self.y())
+
     def update(self, liste_nourriture, liste_bete=None):
         # nourriture à atteindre
         destination, distance = self.nourriture_la_plus_proche(liste_nourriture)
@@ -86,7 +92,7 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
             self.pos += direction * self.vitesse  # todo prendre en compte le poids
 
             # on met à jour la position du carré pour la détection de collision
-            self.rect.center = (self.x(), self.y())
+            self.update_detection()
 
     def draw(self, screen):
         # pg.draw.circle(screen, self.color, (self.x(), self.y()), self.radius)
