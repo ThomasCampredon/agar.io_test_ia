@@ -12,6 +12,7 @@ if __name__ == '__main__':
     clock = pg.time.Clock()
 
     enviro = Environnement()
+    pause = False
 
     while running:
         for event in pg.event.get():
@@ -19,8 +20,20 @@ if __name__ == '__main__':
                 running = False
                 print("ARRET")
 
-        enviro.update()
-        enviro.draw()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_p:
+                    if not pause:
+                        pause = True
+                        print("Pause")
+                    else:
+                        pause = False
+                        print("Relance")
+                if event.key == pg.K_s:
+                    enviro.ajouter_bete()
+
+        if not pause:
+            enviro.update()
+            enviro.draw()
         clock.tick(144)
 
     pg.quit()

@@ -8,9 +8,9 @@ from bete import Bete
 class Environnement:
     SCREEN_WIDTH = 1920
     SCREEN_HEIGHT = 1080
-    NB_NOURRITURE = 300
+    NB_NOURRITURE = 400
     NB_BETE = 4
-    RATIO_TAILLE_POUR_MANGER = 1.3
+    RATIO_TAILLE_POUR_MANGER = 1.2  # ex : une bête doit être 1.2 fois plus lourde que l'autre pour pouvoir la manger
 
     def __init__(self):
         self.screen = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
@@ -25,8 +25,11 @@ class Environnement:
 
     def generer_bete(self):
         while len(self.betes) < self.NB_BETE:
-            bete = Bete(rd.randint(0, self.SCREEN_WIDTH), rd.randint(0, self.SCREEN_HEIGHT), 1, 250)
-            self.betes.add(bete)
+            self.ajouter_bete()
+
+    def ajouter_bete(self):
+        bete = Bete(rd.randint(0, self.SCREEN_WIDTH), rd.randint(0, self.SCREEN_HEIGHT), 1, 250)
+        self.betes.add(bete)
 
     def afficher_nourritures(self):
         for nourriture in self.nourritures:

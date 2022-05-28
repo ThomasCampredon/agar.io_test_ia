@@ -13,6 +13,8 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
     Classe pour les bêtes, qui mangent de la nourriture ou d'autre bête
     """
 
+    RAYON_INITIAL = 15
+
     def __init__(self, x: int, y: int, vitesse=2, detection_range: float = 100, poids: int = 15,
                  *groups: AbstractGroup):
 
@@ -29,7 +31,7 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         # vitesse de la bête
         self.vitesse = vitesse
 
-        self.radius = math.sqrt(self.poids)
+        self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
 
         self.image = pg.Surface([self.radius, self.radius])
         self.rect = self.image.get_rect(center=(x, y))
@@ -37,6 +39,9 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         self.rect.width = self.radius * 2
 
         self.color = (0, 200, 125)
+
+    def update_radius(self):
+        self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
 
     def nourriture_la_plus_proche(self, liste_nourriture):
         dist_min = 999999  # distance minimal jusqu'à une nourriture
@@ -59,7 +64,7 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         self.poids += mangeable.poids
 
         # on met à jour le rayon du cercle en fonction du poids
-        self.radius = math.sqrt(self.poids)
+        self.update_radius()
 
         # on met à jour la taille du carré pour la détection de collision
         self.rect.height = self.radius * 2
