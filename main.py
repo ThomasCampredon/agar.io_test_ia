@@ -1,8 +1,7 @@
 import pygame as pg
-import numpy as np
 
 from environnement import Environnement
-
+from player import Player
 
 if __name__ == '__main__':
     running = True
@@ -11,8 +10,9 @@ if __name__ == '__main__':
 
     clock = pg.time.Clock()
 
-    enviro = Environnement()
+    enviro = Environnement(joueur=True)
     pause = False
+    FPS = 75
 
     while running:
         for event in pg.event.get():
@@ -34,6 +34,7 @@ if __name__ == '__main__':
         if not pause:
             enviro.update()
             enviro.draw()
-        clock.tick(144)
+
+        clock.tick(FPS)
 
     pg.quit()

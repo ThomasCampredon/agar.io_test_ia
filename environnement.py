@@ -10,18 +10,21 @@ class Environnement:
     SCREEN_WIDTH = 1920
     SCREEN_HEIGHT = 1080
     NB_NOURRITURE = 400
-    NB_BETE = 4
+    NB_BETE = 5  # joueur inclus
     RATIO_TAILLE_POUR_MANGER = 1.2  # ex : une bête doit être 1.2 fois plus lourde que l'autre pour pouvoir la manger
 
-    def __init__(self, vitesse_basique=1):
+    def __init__(self, vitesse_basique=2, joueur=False):
         self.screen = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.vitesse_basique = vitesse_basique
 
         self.nourritures = pg.sprite.Group()
         self.betes = pg.sprite.Group()
-        self.generer_bete()
 
-        self.betes.add(Player(0, 0))
+        if joueur:
+            # on ajoute un joueur
+            self.betes.add(Player(0, 0, vitesse_basique))
+
+        self.generer_bete()
 
     def generer_nourriture(self):
         while len(self.nourritures) < self.NB_NOURRITURE:
@@ -32,7 +35,7 @@ class Environnement:
             self.ajouter_bete()
 
     def ajouter_bete(self):
-        bete = Bete(rd.randint(0, self.SCREEN_WIDTH), rd.randint(0, self.SCREEN_HEIGHT), self.vitesse_basique, 250)
+        bete = Bete(rd.randint(0, self.SCREEN_WIDTH), rd.randint(0, self.SCREEN_HEIGHT), self.vitesse_basique)
         self.betes.add(bete)
 
     def afficher_nourritures(self):
@@ -40,8 +43,6 @@ class Environnement:
             nourriture.draw(self.screen)
 
     def afficher_betes(self):
-        for bete in self.betes:
-            bete.draw_detection_range(self.screen)
         for bete in self.betes:
             bete.draw(self.screen)
 

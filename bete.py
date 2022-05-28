@@ -15,8 +15,7 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
 
     RAYON_INITIAL = 15
 
-    def __init__(self, x: int, y: int, vitesse=2, detection_range: float = 100, poids: int = 15,
-                 *groups: AbstractGroup):
+    def __init__(self, x: int, y: int, vitesse=2, poids: int = 15, *groups: AbstractGroup):
 
         # todo définir une classe stratégie et ses classes filles pour faire varier le update
 
@@ -24,9 +23,6 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         pg.sprite.Sprite.__init__(self, *groups)
         Objet_basique.__init__(self, x, y)
         Mangeable.__init__(self, poids)
-
-        # distance de vue de la bête
-        self.detection_range = detection_range
 
         # vitesse de la bête
         self.vitesse = vitesse
@@ -50,7 +46,7 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         # pour chaque nourriture
         for nourriture in liste_nourriture:
             # distance simplifié entre la nourriture et la bête
-            dist = self.distance(nourriture)
+            dist = self.distance_manhattan(nourriture)
 
             # si on a plus proche
             if dist < dist_min:
@@ -80,19 +76,17 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         # nourriture à atteindre
         destination, distance = self.nourriture_la_plus_proche(liste_nourriture)
 
-        # si on voit la nourriture la plus proche
-        if distance < self.detection_range:
-            # vecteur direction vers la nourriture
-            direction = destination.pos - self.pos
+        # vecteur direction vers la nourriture
+        direction = destination.pos - self.pos
 
-            # on transforme le vecteur direction en vecteur unitaire
-            direction = direction / np.linalg.norm(direction)
+        # on transforme le vecteur direction en vecteur unitaire
+        direction = direction / np.linalg.norm(direction)
 
-            # on modifie la position avec la direction et la vitesse
-            self.pos += direction * self.vitesse  # todo prendre en compte le poids
+        # on modifie la position avec la direction et la vitesse
+        self.pos += direction * self.vitesse  # todo prendre en compte le poids
 
-            # on met à jour la position du carré pour la détection de collision
-            self.update_detection()
+        # on met à jour la position du carré pour la détection de collision
+        self.update_detection()
 
     def draw(self, screen):
         # pg.draw.circle(screen, self.color, (self.x(), self.y()), self.radius)
@@ -104,6 +98,3 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         text_surface_obj = font_obj.render(str(self.poids), True, "white")
         text_rect_obj = text_surface_obj.get_rect(center=(self.x(), self.y()))
         screen.blit(text_surface_obj, text_rect_obj)
-
-    def draw_detection_range(self, screen):
-        pg.draw.circle(screen, (125, 125, 125, 120), (self.x(), self.y()), self.detection_range)
