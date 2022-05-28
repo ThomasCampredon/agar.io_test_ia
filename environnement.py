@@ -88,17 +88,11 @@ class Environnement:
         self.gerer_collisions()
 
         # on fait bouger les bêtes
-        self.betes.update(self.nourritures, self.betes)
+        self.betes.update(self.nourritures, self.betes)  # todo voir pour utiliser la librairie multiprocessing
 
     def draw(self):
-        # on ajoute l'arrière-plan à la surface
-        self.screen.fill((0, 0, 0))
-
         # on affiche les bêtes
         self.afficher_betes()
 
         # on affiche toutes les nourritures
         self.afficher_nourritures()
-
-        # on met à jour l'affichage
-        pg.display.flip()

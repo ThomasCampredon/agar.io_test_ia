@@ -66,6 +66,16 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         self.rect.height = self.radius * 2
         self.rect.width = self.radius * 2
 
+    def move(self, destination: np.ndarray):
+        # vecteur direction vers la destination
+        direction = destination - self.pos
+
+        # on transforme le vecteur direction en vecteur unitaire
+        direction = direction / np.linalg.norm(direction)
+
+        # on modifie la position avec la direction et la vitesse en prenant en compte la taille
+        self.pos += direction * (self.vitesse - (math.sqrt(self.radius) * 0.08))  # todo voir si possible d'avoir mieux
+
     def update_detection(self):
         """
         On met à jour la position de la hitbox
@@ -76,14 +86,7 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         # nourriture à atteindre
         destination, distance = self.nourriture_la_plus_proche(liste_nourriture)
 
-        # vecteur direction vers la nourriture
-        direction = destination.pos - self.pos
-
-        # on transforme le vecteur direction en vecteur unitaire
-        direction = direction / np.linalg.norm(direction)
-
-        # on modifie la position avec la direction et la vitesse
-        self.pos += direction * self.vitesse  # todo prendre en compte le poids
+        self.move(destination.pos)
 
         # on met à jour la position du carré pour la détection de collision
         self.update_detection()

@@ -1,6 +1,7 @@
 from bete import Bete
 import pygame as pg
 import numpy as np
+import math
 
 
 class Player(Bete):
@@ -12,12 +13,6 @@ class Player(Bete):
         destination = pg.mouse.get_pos()
         destination = np.array(destination)
 
-        direction = destination - self.pos
-
-        # on transforme le vecteur direction en vecteur unitaire
-        direction = direction / np.linalg.norm(direction)
-
-        # on modifie la position avec la direction et la vitesse
-        self.pos += direction * self.vitesse
+        self.move(destination)
 
         self.update_detection()

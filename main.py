@@ -1,7 +1,7 @@
 import pygame as pg
 
 from environnement import Environnement
-from player import Player
+
 
 if __name__ == '__main__':
     running = True
@@ -30,11 +30,21 @@ if __name__ == '__main__':
                         print("Relance")
                 if event.key == pg.K_s:
                     enviro.ajouter_bete()
+                    print("Spawn 1 bête")
 
         if not pause:
+            # on ajoute l'arrière-plan à la surface
+            enviro.screen.fill((0, 0, 0))
+
+            # on calcule les mouvements des bêtes
             enviro.update()
+
+            # on affiche les bêtes et les nourritures
             enviro.draw()
 
-        clock.tick(FPS)
+            # on met à jour l'affichage
+            pg.display.flip()
+
+            clock.tick(FPS)
 
     pg.quit()
