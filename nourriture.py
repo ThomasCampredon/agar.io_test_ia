@@ -1,6 +1,6 @@
 import pygame as pg
 import pygame.gfxdraw
-import math
+import numpy as np
 
 from pygame.sprite import AbstractGroup
 from objet_basique import Objet_basique
@@ -22,7 +22,8 @@ class Nourriture(pg.sprite.Sprite, Objet_basique, Mangeable):
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (125, 25, 125)
 
-    def draw(self, screen):
-        # pg.draw.circle(screen, self.color, (self.x(), self.y()), self.radius)
-        pg.gfxdraw.aacircle(screen, int(self.x()), int(self.y()), self.radius, self.color)
-        pg.gfxdraw.filled_circle(screen, int(self.x()), int(self.y()), self.radius, self.color)
+    def draw(self, screen, pos_screen: np.ndarray):
+        pos_relative = self.position_relative(pos_screen)
+
+        pg.gfxdraw.aacircle(screen, int(pos_relative[0]), int(pos_relative[1]), self.radius, self.color)
+        pg.gfxdraw.filled_circle(screen, int(pos_relative[0]), int(pos_relative[1]), self.radius, self.color)

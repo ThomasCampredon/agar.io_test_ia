@@ -1,5 +1,7 @@
+import numpy as np
 import pygame as pg
 import random as rd
+import pygame.gfxdraw
 
 from nourriture import Nourriture
 from bete import Bete
@@ -9,41 +11,55 @@ from player import Player
 class Environnement:
     LARGEUR = 4000
     HAUTEUR = 2000
-    NB_NOURRITURE = 400
+    NB_NOURRITURE = LARGEUR * HAUTEUR // 5000
     NB_BETE = 5  # joueur inclus
     RATIO_TAILLE_POUR_MANGER = 1.2  # ex : une bête doit être 1.2 fois plus lourde que l'autre pour pouvoir la manger
+    VITESSE_BASIQUE = 3
 
-    def __init__(self, vitesse_basique=3, joueur=False):
-        self.vitesse_basique = vitesse_basique
-
+    def __init__(self, joueur=False, largeur_screen=1920, hauteur_screen=1080):
         self.nourritures = pg.sprite.Group()  # todo séparer les points en secteurs
         self.betes = pg.sprite.Group()
+        self.generer_bete()
+
+        self.bete_focus = None
 
         if joueur:
-            # on ajoute un joueur
-            self.betes.add(Player(0, 0, vitesse_basique))
+            joueur = Player(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR), self.VITESSE_BASIQUE)
 
-        self.generer_bete()
+            # on ajoute un joueur
+            self.betes.add(joueur)
+
+            # on enregistre le joueur pour qu'il soit au centre de l'écran
+            self.bete_focus = joueur
+
+            self.bete_focus.origine_repere = self.pos_repere_screen(largeur_screen, hauteur_screen)
+        else:
+            bete = self.ajouter_bete()
+
+            # on enregistre la bête pour qu'elle soit au centre de l'écran
+            self.bete_focus = bete
 
     def generer_nourriture(self):
         while len(self.nourritures) < self.NB_NOURRITURE:
             self.nourritures.add(Nourriture(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR)))
 
     def generer_bete(self):
-        while len(self.betes) < self.NB_BETE:
+        while len(self.betes) < self.NB_BETE-1:
             self.ajouter_bete()
 
     def ajouter_bete(self):
-        bete = Bete(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR), self.vitesse_basique)
+        bete = Bete(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR), self.VITESSE_BASIQUE)
         self.betes.add(bete)
 
-    def afficher_nourritures(self, screen):
-        for nourriture in self.nourritures:
-            nourriture.draw(screen)
+        return bete
 
-    def afficher_betes(self, screen):
+    def afficher_nourritures(self, screen, pos_screen:np.ndarray):
+        for nourriture in self.nourritures:
+            nourriture.draw(screen, pos_screen)
+
+    def afficher_betes(self, screen, pos_screen:np.ndarray):
         for bete in self.betes:
-            bete.draw(screen)
+            bete.draw(screen, pos_screen)
 
     def gerer_collisions_bete_betes(self, bete: Bete):
         # liste des bêtes qui se sont fait manger par une autre bête
@@ -79,6 +95,18 @@ class Environnement:
             self.gerer_collisions_bete_nourritures(bete)
             self.gerer_collisions_bete_betes(bete)
 
+    def pos_repere_screen(self, largeur_screen, hauteur_screen):
+        """
+        coordonnées de l'origine du repère de la fenêtre par rapport à l'origine
+        global (voir schemas/affichage_joueur.drawio.png pour plus de détails)
+        """
+        pos_screen = np.zeros((2,))
+
+        pos_screen[0] = self.bete_focus.x() - largeur_screen // 2
+        pos_screen[1] = self.bete_focus.y() - hauteur_screen // 2
+
+        return pos_screen
+
     def update(self):
         # on maintient NB_NOURRITURE de nourriture
         self.generer_nourriture()
@@ -90,8 +118,19 @@ class Environnement:
         self.betes.update(self.nourritures, self.betes)  # todo voir pour utiliser la librairie multiprocessing
 
     def draw(self, screen):
+        # coordonnées de l'origine du repère de la fenêtre par rapport à l'origine
+        # global (voir schemas/affichage_joueur.drawio.png pour plus de détails)
+        pos_screen = self.pos_repere_screen(screen.get_width(), screen.get_height())
+
+        self.bete_focus.origine_repere = pos_screen  # on passe le repère de la fenêtre au joueur
+
+        #print(pos_screen)
+
+        # on affiche la bordure
+        # pg.gfxdraw.rectangle(screen, pg.Rect((0, 0), (self.LARGEUR, self.HAUTEUR)), (255, 255, 255)) # todo mettre dans le bon repère
+
         # on affiche les bêtes
-        self.afficher_betes(screen)
+        self.afficher_betes(screen, pos_screen)
 
         # on affiche toutes les nourritures
-        self.afficher_nourritures(screen)
+        self.afficher_nourritures(screen, pos_screen)

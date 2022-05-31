@@ -6,15 +6,15 @@ SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 FPS = 75
 
-
 if __name__ == '__main__':
     running = True
 
     pg.init()
+    pg.display.set_caption("Agar pas très io")
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pg.time.Clock()
 
-    enviro = Environnement(joueur=True)
+    enviro = Environnement(True, SCREEN_WIDTH, SCREEN_HEIGHT)
     pause = False
 
     while running:

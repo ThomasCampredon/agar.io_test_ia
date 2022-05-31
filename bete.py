@@ -94,13 +94,14 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         # on met à jour la position du carré pour la détection de collision
         self.update_detection()
 
-    def draw(self, screen):
-        # pg.draw.circle(screen, self.color, (self.x(), self.y()), self.radius)
-        pg.gfxdraw.aacircle(screen, int(self.x()), int(self.y()), int(self.radius), self.color)
-        pg.gfxdraw.filled_circle(screen, int(self.x()), int(self.y()), int(self.radius), self.color)
+    def draw(self, screen, pos_screen: np.ndarray):
+        pos_relative = self.position_relative(pos_screen)
+
+        pg.gfxdraw.aacircle(screen, int(pos_relative[0]), int(pos_relative[1]), int(self.radius), self.color)
+        pg.gfxdraw.filled_circle(screen, int(pos_relative[0]), int(pos_relative[1]), int(self.radius), self.color)
 
         # on met le poids en texte
         font_obj = pygame.font.Font('freesansbold.ttf', 16)
         text_surface_obj = font_obj.render(str(self.poids), True, "white")
-        text_rect_obj = text_surface_obj.get_rect(center=(self.x(), self.y()))
+        text_rect_obj = text_surface_obj.get_rect(center=(pos_relative[0], pos_relative[1]))
         screen.blit(text_surface_obj, text_rect_obj)
