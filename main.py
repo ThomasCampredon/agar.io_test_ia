@@ -2,17 +2,20 @@ import pygame as pg
 
 from environnement import Environnement
 
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
+FPS = 75
+
 
 if __name__ == '__main__':
     running = True
 
     pg.init()
-
+    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pg.time.Clock()
 
     enviro = Environnement(joueur=True)
     pause = False
-    FPS = 75
 
     while running:
         for event in pg.event.get():
@@ -34,13 +37,13 @@ if __name__ == '__main__':
 
         if not pause:
             # on ajoute l'arrière-plan à la surface
-            enviro.screen.fill((0, 0, 0))
+            screen.fill((0, 0, 0))
 
             # on calcule les mouvements des bêtes
             enviro.update()
 
             # on affiche les bêtes et les nourritures
-            enviro.draw()
+            enviro.draw(screen)
 
             # on met à jour l'affichage
             pg.display.flip()

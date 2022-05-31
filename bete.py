@@ -74,7 +74,9 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         direction = direction / np.linalg.norm(direction)
 
         # on modifie la position avec la direction et la vitesse en prenant en compte la taille
-        self.pos += direction * (self.vitesse - (math.sqrt(self.radius) * 0.08))  # todo voir si possible d'avoir mieux
+        self.pos += direction * (self.vitesse - (math.sqrt(self.radius) * 0.05))  # todo voir si possible d'avoir mieux
+
+    # todo essayer de faire le split()
 
     def update_detection(self):
         """
@@ -86,6 +88,7 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
         # nourriture à atteindre
         destination, distance = self.nourriture_la_plus_proche(liste_nourriture)
 
+        #
         self.move(destination.pos)
 
         # on met à jour la position du carré pour la détection de collision

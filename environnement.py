@@ -7,17 +7,16 @@ from player import Player
 
 
 class Environnement:
-    SCREEN_WIDTH = 1920
-    SCREEN_HEIGHT = 1080
+    LARGEUR = 4000
+    HAUTEUR = 2000
     NB_NOURRITURE = 400
     NB_BETE = 5  # joueur inclus
     RATIO_TAILLE_POUR_MANGER = 1.2  # ex : une bête doit être 1.2 fois plus lourde que l'autre pour pouvoir la manger
 
-    def __init__(self, vitesse_basique=2, joueur=False):
-        self.screen = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+    def __init__(self, vitesse_basique=3, joueur=False):
         self.vitesse_basique = vitesse_basique
 
-        self.nourritures = pg.sprite.Group()
+        self.nourritures = pg.sprite.Group()  # todo séparer les points en secteurs
         self.betes = pg.sprite.Group()
 
         if joueur:
@@ -28,23 +27,23 @@ class Environnement:
 
     def generer_nourriture(self):
         while len(self.nourritures) < self.NB_NOURRITURE:
-            self.nourritures.add(Nourriture(rd.randint(0, self.SCREEN_WIDTH), rd.randint(0, self.SCREEN_HEIGHT)))
+            self.nourritures.add(Nourriture(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR)))
 
     def generer_bete(self):
         while len(self.betes) < self.NB_BETE:
             self.ajouter_bete()
 
     def ajouter_bete(self):
-        bete = Bete(rd.randint(0, self.SCREEN_WIDTH), rd.randint(0, self.SCREEN_HEIGHT), self.vitesse_basique)
+        bete = Bete(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR), self.vitesse_basique)
         self.betes.add(bete)
 
-    def afficher_nourritures(self):
+    def afficher_nourritures(self, screen):
         for nourriture in self.nourritures:
-            nourriture.draw(self.screen)
+            nourriture.draw(screen)
 
-    def afficher_betes(self):
+    def afficher_betes(self, screen):
         for bete in self.betes:
-            bete.draw(self.screen)
+            bete.draw(screen)
 
     def gerer_collisions_bete_betes(self, bete: Bete):
         # liste des bêtes qui se sont fait manger par une autre bête
@@ -90,9 +89,9 @@ class Environnement:
         # on fait bouger les bêtes
         self.betes.update(self.nourritures, self.betes)  # todo voir pour utiliser la librairie multiprocessing
 
-    def draw(self):
+    def draw(self, screen):
         # on affiche les bêtes
-        self.afficher_betes()
+        self.afficher_betes(screen)
 
         # on affiche toutes les nourritures
-        self.afficher_nourritures()
+        self.afficher_nourritures(screen)

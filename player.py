@@ -1,7 +1,6 @@
 from bete import Bete
 import pygame as pg
 import numpy as np
-import math
 
 
 class Player(Bete):
