@@ -37,6 +37,6 @@ class Objet_basique:
         pos_relative = np.zeros((2,))
 
         pos_relative[0] = self.x() - pos_screen[0]
-        pos_relative[1] = self.y() - pos_screen[1]  # todo vérifier le -
+        pos_relative[1] = self.y() - pos_screen[1]
 
         return pos_relative

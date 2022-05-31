@@ -14,7 +14,8 @@ class Environnement:
     NB_NOURRITURE = LARGEUR * HAUTEUR // 5000
     NB_BETE = 5  # joueur inclus
     RATIO_TAILLE_POUR_MANGER = 1.2  # ex : une bête doit être 1.2 fois plus lourde que l'autre pour pouvoir la manger
-    VITESSE_BASIQUE = 3
+    VITESSE_BASIQUE = 3  # vitesse de départ des bêtes
+    LIMITE_POIDS_MANGER = 400  # limite de poids à laquelle une bête ne grossit plus en mangeant de la nourriture
 
     def __init__(self, joueur=False, largeur_screen=1920, hauteur_screen=1080):
         self.nourritures = pg.sprite.Group()  # todo séparer les points en secteurs
@@ -44,7 +45,7 @@ class Environnement:
             self.nourritures.add(Nourriture(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR)))
 
     def generer_bete(self):
-        while len(self.betes) < self.NB_BETE-1:
+        while len(self.betes) < self.NB_BETE - 1:
             self.ajouter_bete()
 
     def ajouter_bete(self):
@@ -53,11 +54,11 @@ class Environnement:
 
         return bete
 
-    def afficher_nourritures(self, screen, pos_screen:np.ndarray):
+    def afficher_nourritures(self, screen, pos_screen: np.ndarray):
         for nourriture in self.nourritures:
             nourriture.draw(screen, pos_screen)
 
-    def afficher_betes(self, screen, pos_screen:np.ndarray):
+    def afficher_betes(self, screen, pos_screen: np.ndarray):
         for bete in self.betes:
             bete.draw(screen, pos_screen)
 
@@ -86,8 +87,10 @@ class Environnement:
 
         # pour chaque nourriture qu'on touche
         for i in range(0, len(nourriture_manger)):
-            # la bête mange la nourriture
-            bete.manger(nourriture_manger[i])
+            # si la bete peut encore grossir en mangeant de la nourriture
+            if bete.poids < self.LIMITE_POIDS_MANGER:
+                # la bête mange la nourriture
+                bete.manger(nourriture_manger[i])
 
     def gerer_collisions(self):
         # pour chaque bête de l'environnement
@@ -124,7 +127,7 @@ class Environnement:
 
         self.bete_focus.origine_repere = pos_screen  # on passe le repère de la fenêtre au joueur
 
-        #print(pos_screen)
+        # print(pos_screen)
 
         # on affiche la bordure
         # pg.gfxdraw.rectangle(screen, pg.Rect((0, 0), (self.LARGEUR, self.HAUTEUR)), (255, 255, 255)) # todo mettre dans le bon repère
