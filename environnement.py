@@ -92,9 +92,25 @@ class Environnement:
                 # la bête mange la nourriture
                 bete.manger(nourriture_manger[i])
 
+    def gerer_collisions_bete_bodures(self, bete):
+        # collision top
+        if bete.y() - bete.radius < 0:
+            bete.pos[1] = bete.radius
+        # collision bottom
+        elif bete.y() + bete.radius > self.HAUTEUR:
+            bete.pos[1] = self.HAUTEUR - bete.radius
+
+        # collision gauche
+        if bete.x() - bete.radius < 0:
+            bete.pos[0] = bete.radius
+        # collision droite
+        elif bete.x() + bete.radius > self.LARGEUR:
+            bete.pos[0] = self.LARGEUR - bete.radius
+
     def gerer_collisions(self):
         # pour chaque bête de l'environnement
         for bete in self.betes:
+            self.gerer_collisions_bete_bodures(bete)
             self.gerer_collisions_bete_nourritures(bete)
             self.gerer_collisions_bete_betes(bete)
 
@@ -115,10 +131,12 @@ class Environnement:
         self.generer_nourriture()
 
         # on gère les collisions
-        self.gerer_collisions()
+        self.gerer_collisions()  # todo vérifier les collisions avec les bords
 
         # on fait bouger les bêtes
         self.betes.update(self.nourritures, self.betes)  # todo voir pour utiliser la librairie multiprocessing
+
+
 
     def draw(self, screen):
         # coordonnées de l'origine du repère de la fenêtre par rapport à l'origine
