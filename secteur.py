@@ -14,16 +14,23 @@ def pos_point_relatif(x_global, y_global, pos_screen):
 
 
 class Secteur(pg.sprite.Sprite):
-    def __init__(self, x_min, x_max, y_min, y_max, *groups: AbstractGroup):
+    def __init__(self, x_min, x_max, y_min, y_max, num_horizontal, num_vertical, *groups: AbstractGroup):
         pg.sprite.Sprite.__init__(self, *groups)
 
+        # position dans le canvas
+        self.num_horizontal = num_horizontal
+        self.num_vertical = num_vertical
+
+        # délimitations du secteur
         self.x_min = x_min
         self.x_max = x_max
         self.y_min = y_min
         self.y_max = y_max
 
+        # rectangle pour la collision
         self.rect = pg.Rect(x_min, y_min, x_max - x_min, y_max - y_min)
 
+        # groupe pour enregistrer les nourritures présentes dans le vecteur
         self.nourritures = pg.sprite.Group()
 
     def ajouter_nourriture(self, nourriture: Nourriture):

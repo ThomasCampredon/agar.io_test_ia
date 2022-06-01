@@ -39,21 +39,33 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
     def update_radius(self):
         self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
 
-    def nourriture_la_plus_proche(self, liste_nourriture):
+    def nourriture_la_plus_proche(self, liste_secteur):
         dist_min = 999999  # distance minimal jusqu'à une nourriture
         nourriture_proche = None  # nourriture la plus proche
 
-        # pour chaque nourriture
-        for nourriture in liste_nourriture:
-            # distance simplifié entre la nourriture et la bête
-            dist = self.distance_manhattan(nourriture)
+        for secteur in liste_secteur:
+            # pour chaque nourriture
+            for nourriture in secteur.nourritures:
+                # distance simplifié entre la nourriture et la bête
+                dist = self.distance_manhattan(nourriture)
 
-            # si on a plus proche
-            if dist < dist_min:
-                dist_min = dist
-                nourriture_proche = nourriture
+                # si on a plus proche
+                if dist < dist_min:
+                    dist_min = dist
+                    nourriture_proche = nourriture
 
         return nourriture_proche, dist_min
+
+    def liste_secteur_collision(self, liste_secteur):
+        # todo faire en sorte de prendre les secteurs autours de ceux qu'on collisionne
+        liste_collision = []  # liste des secteurs en collision avec la bête
+
+        for secteur in liste_secteur:
+            # si on a collision
+            if pg.sprite.collide_rect(self, secteur):
+                liste_collision.append(secteur)  # on ajoute le secteur à la liste
+
+        return liste_collision
 
     def manger(self, mangeable: Mangeable):
         # on prend le poids du mangeable
@@ -84,12 +96,15 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         """
         self.rect.center = (self.x(), self.y())
 
-    def update(self, liste_nourriture, liste_bete=None):
+    def update(self, liste_secteur, liste_bete=None):  # todo en cours
         # nourriture à atteindre
-        destination, distance = self.nourriture_la_plus_proche(liste_nourriture)
+        destination, distance = self.nourriture_la_plus_proche(self.liste_secteur_collision(liste_secteur))
 
-        #
-        self.move(destination.pos)
+        try:
+            # se déplacer vers la destination
+            self.move(destination.pos)
+        except AttributeError:
+            pass
 
         # on met à jour la position du carré pour la détection de collision
         self.update_detection()
