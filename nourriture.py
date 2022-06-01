@@ -3,18 +3,18 @@ import pygame.gfxdraw
 import numpy as np
 
 from pygame.sprite import AbstractGroup
-from objet_basique import Objet_basique
+from objetbasique import ObjetBasique
 from mangeable import Mangeable
 
 
-class Nourriture(pg.sprite.Sprite, Objet_basique, Mangeable):
+class Nourriture(pg.sprite.Sprite, ObjetBasique, Mangeable):
     """
     Classe pour gérer la nourriture qui apparaitra aléatoirement sur le canvas
     """
 
     def __init__(self, x: int, y: int, poids=1, *groups: AbstractGroup):
         pg.sprite.Sprite.__init__(self, *groups)
-        Objet_basique.__init__(self, x, y)
+        ObjetBasique.__init__(self, x, y)
         Mangeable.__init__(self, poids)
 
         self.radius = 3

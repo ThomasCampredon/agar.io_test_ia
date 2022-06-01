@@ -3,12 +3,12 @@ import pygame.gfxdraw
 import numpy as np
 import math
 
-from objet_basique import Objet_basique
+from objetbasique import ObjetBasique
 from mangeable import Mangeable
 from pygame.sprite import AbstractGroup
 
 
-class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
+class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
     """
     Classe pour les bêtes, qui mangent de la nourriture ou d'autre bête
     """
@@ -21,7 +21,7 @@ class Bete(pg.sprite.Sprite, Objet_basique, Mangeable):
 
         # init superclasses
         pg.sprite.Sprite.__init__(self, *groups)
-        Objet_basique.__init__(self, x, y)
+        ObjetBasique.__init__(self, x, y)
         Mangeable.__init__(self, poids)
 
         # vitesse de la bête

@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 
-class Objet_basique:
+class ObjetBasique:
     def __init__(self, x: int, y: int):
         self.pos = np.ndarray((2,))
         self.pos[0] = x

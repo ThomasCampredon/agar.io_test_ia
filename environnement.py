@@ -6,11 +6,14 @@ import pygame.gfxdraw
 from nourriture import Nourriture
 from bete import Bete
 from player import Player
-
+from secteur import Secteur
 
 class Environnement:
     LARGEUR = 4000
     HAUTEUR = 2000
+    NB_SECTEURS_HORIZONTAL = 5
+    NB_SECTEURS_VERTICAL = 3
+
     NB_NOURRITURE = LARGEUR * HAUTEUR // 5000
     NB_BETE = 5  # joueur inclus
     RATIO_TAILLE_POUR_MANGER = 1.2  # ex : une bête doit être 1.2 fois plus lourde que l'autre pour pouvoir la manger
@@ -18,7 +21,12 @@ class Environnement:
     LIMITE_POIDS_MANGER = 400  # limite de poids à laquelle une bête ne grossit plus en mangeant de la nourriture
 
     def __init__(self, joueur=False, largeur_screen=1920, hauteur_screen=1080):
-        self.nourritures = pg.sprite.Group()  # todo séparer les points en secteurs
+        self.secteurs = pg.sprite.Group()
+        self.generer_secteur()
+
+        self.nourritures = pg.sprite.Group()  # todo séparer les points en secteurs en cours
+        self.generer_nourriture()
+
         self.betes = pg.sprite.Group()
         self.generer_bete()
 
@@ -39,6 +47,18 @@ class Environnement:
 
             # on enregistre la bête pour qu'elle soit au centre de l'écran
             self.bete_focus = bete
+
+    def generer_secteur(self):
+        largeur_secteur = self.LARGEUR // self.NB_SECTEURS_HORIZONTAL
+        hauteur_secteur = self.HAUTEUR // self.NB_SECTEURS_VERTICAL
+
+        x = 0
+        y = 0
+
+        for x in range(0, self.NB_SECTEURS_HORIZONTAL):
+            for y in range(0, self.NB_SECTEURS_VERTICAL):
+                self.secteurs.add(Secteur(x * largeur_secteur, (x * largeur_secteur) + largeur_secteur,
+                                          y * hauteur_secteur, (y * hauteur_secteur) + hauteur_secteur))
 
     def generer_nourriture(self):
         while len(self.nourritures) < self.NB_NOURRITURE:
@@ -61,6 +81,10 @@ class Environnement:
     def afficher_betes(self, screen, pos_screen: np.ndarray):
         for bete in self.betes:
             bete.draw(screen, pos_screen)
+
+    def afficher_secteurs(self, screen, pos_screen: np.ndarray):
+        for secteur in self.secteurs:
+            secteur.draw(screen, pos_screen)
 
     def gerer_collisions_bete_betes(self, bete: Bete):
         # liste des bêtes qui se sont fait manger par une autre bête
@@ -136,8 +160,6 @@ class Environnement:
         # on fait bouger les bêtes
         self.betes.update(self.nourritures, self.betes)  # todo voir pour utiliser la librairie multiprocessing
 
-
-
     def draw(self, screen):
         # coordonnées de l'origine du repère de la fenêtre par rapport à l'origine
         # global (voir schemas/affichage_joueur.drawio.png pour plus de détails)
@@ -145,10 +167,11 @@ class Environnement:
 
         self.bete_focus.origine_repere = pos_screen  # on passe le repère de la fenêtre au joueur
 
-        # print(pos_screen)
-
         # on affiche la bordure
         # pg.gfxdraw.rectangle(screen, pg.Rect((0, 0), (self.LARGEUR, self.HAUTEUR)), (255, 255, 255)) # todo mettre dans le bon repère
+
+        # on affiche les délimitations des secteurs
+        self.afficher_secteurs(screen, pos_screen)
 
         # on affiche les bêtes
         self.afficher_betes(screen, pos_screen)
