@@ -3,9 +3,12 @@ import pygame.gfxdraw
 import numpy as np
 import math
 
+from nourriture import Nourriture
 from objetbasique import ObjetBasique
 from mangeable import Mangeable
 from pygame.sprite import AbstractGroup
+
+from secteur import Secteur
 
 
 class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
@@ -42,7 +45,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
     def update_radius(self):
         self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
 
-    def nourriture_la_plus_proche(self, liste_secteur):
+    def nourriture_la_plus_proche(self, liste_secteur) -> Nourriture:
         dist_min = 999999  # distance minimal jusqu'à une nourriture
         nourriture_proche = None  # nourriture la plus proche
 
@@ -57,9 +60,9 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
                     dist_min = dist
                     nourriture_proche = nourriture
 
-        return nourriture_proche, dist_min
+        return nourriture_proche
 
-    def liste_secteur_collision(self, liste_secteur):
+    def liste_secteur_collision(self, liste_secteur) -> set[Secteur]:
         # todo faire en sorte de prendre les secteurs autours de ceux qu'on collisionne
         liste_collision = set()  # set des secteurs en collision avec la bête
 
@@ -70,7 +73,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
         return liste_collision
 
-    def manger(self, mangeable: Mangeable):
+    def manger(self, mangeable: Mangeable) -> None:
         # on prend le poids du mangeable
         self.poids += mangeable.poids
 
@@ -81,22 +84,23 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         self.rect.height = self.radius * 2
         self.rect.width = self.radius * 2
 
-    def move(self, destination: np.ndarray):
+    def calculer_direction(self, destination: np.ndarray) -> None:
         # vecteur direction vers la destination
         self.direction = destination - self.pos
 
         # on transforme le vecteur direction en vecteur unitaire
         self.direction = self.direction / np.linalg.norm(self.direction)
 
+    def move(self) -> None:
         # on modifie la position avec la direction et la vitesse en prenant en compte la taille
         self.pos += self.direction * (self.vitesse - (math.sqrt(self.radius) * 0.08))  # todo voir si possible d'avoir mieux
 
-    def split(self):
+    def split(self) -> None:
         print("split")
         pass
         # todo essayer de faire le split()
 
-    def update_detection(self):
+    def update_hitbox(self) -> None:
         """
         On met à jour la position de la hitbox
         """
@@ -104,16 +108,19 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
     def update(self, liste_secteur, liste_bete=None):
         # nourriture à atteindre
-        destination, distance = self.nourriture_la_plus_proche(self.liste_secteur_collision(liste_secteur))
+        destination = self.nourriture_la_plus_proche(self.liste_secteur_collision(liste_secteur))
+
+        # on calcule la direction que la bête doit prendre pour atteindre la nourriture
+        self.calculer_direction(destination.pos)
 
         try:
             # se déplacer vers la destination
-            self.move(destination.pos)
+            self.move()
         except AttributeError:
             pass
 
         # on met à jour la position du carré pour la détection de collision
-        self.update_detection()
+        self.update_hitbox()
 
     def draw(self, screen, pos_screen: np.ndarray):
         pos_relative = self.position_relative(pos_screen)

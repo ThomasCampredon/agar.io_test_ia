@@ -4,7 +4,7 @@ from pygame.sprite import AbstractGroup
 from nourriture import Nourriture
 
 
-def pos_point_relatif(x_global, y_global, pos_screen):
+def pos_point_relatif(x_global, y_global, pos_screen) -> np.ndarray:
     pos_relative = np.zeros((2,))
 
     pos_relative[0] = x_global - pos_screen[0]

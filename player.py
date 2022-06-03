@@ -11,13 +11,21 @@ class Player(Bete):
         self.color = (200, 128, 10)
         self.origine_repere = None
 
-    def update(self, liste_nourriture, liste_bete=None):
+    def update(self, liste_secteur, liste_bete=None):
+        # on récupère la position de la souris dans la fenêtre
         destination = pg.mouse.get_pos()
 
         destination = np.array(destination)
+        # on calcule les coordonnées de la destination dans le repere du canvas
         destination = destination + self.origine_repere
 
+        # si la souris est suffisament éloigner du centre de la bete
         if math.sqrt(pow(destination[0] - self.x(), 2) + pow(destination[1] - self.y(), 2)) > 30:
-            self.move(destination)
+            # on calcule la direction dans laquelle va avancer le joueur
+            self.calculer_direction(destination)
 
-            self.update_detection()
+            # on déplace le joueur
+            self.move()
+
+            # on met à jour la hitbox
+            self.update_hitbox()
