@@ -27,6 +27,9 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         # vitesse de la bête
         self.vitesse = vitesse
 
+        # direction dans laquelle va la bete
+        self.direction = np.zeros((2,))
+
         self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
 
         self.image = pg.Surface([self.radius, self.radius])
@@ -58,12 +61,12 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
     def liste_secteur_collision(self, liste_secteur):
         # todo faire en sorte de prendre les secteurs autours de ceux qu'on collisionne
-        liste_collision = []  # liste des secteurs en collision avec la bête
+        liste_collision = set()  # set des secteurs en collision avec la bête
 
         for secteur in liste_secteur:
             # si on a collision
             if pg.sprite.collide_rect(self, secteur):
-                liste_collision.append(secteur)  # on ajoute le secteur à la liste
+                liste_collision.add(secteur)  # on ajoute le secteur à la liste
 
         return liste_collision
 
@@ -80,15 +83,18 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
     def move(self, destination: np.ndarray):
         # vecteur direction vers la destination
-        direction = destination - self.pos
+        self.direction = destination - self.pos
 
         # on transforme le vecteur direction en vecteur unitaire
-        direction = direction / np.linalg.norm(direction)
+        self.direction = self.direction / np.linalg.norm(self.direction)
 
         # on modifie la position avec la direction et la vitesse en prenant en compte la taille
-        self.pos += direction * (self.vitesse - (math.sqrt(self.radius) * 0.05))  # todo voir si possible d'avoir mieux
+        self.pos += self.direction * (self.vitesse - (math.sqrt(self.radius) * 0.08))  # todo voir si possible d'avoir mieux
 
-    # todo essayer de faire le split()
+    def split(self):
+        print("split")
+        pass
+        # todo essayer de faire le split()
 
     def update_detection(self):
         """
@@ -96,7 +102,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         """
         self.rect.center = (self.x(), self.y())
 
-    def update(self, liste_secteur, liste_bete=None):  # todo en cours
+    def update(self, liste_secteur, liste_bete=None):
         # nourriture à atteindre
         destination, distance = self.nourriture_la_plus_proche(self.liste_secteur_collision(liste_secteur))
 

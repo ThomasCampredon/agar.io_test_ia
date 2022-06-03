@@ -34,6 +34,8 @@ if __name__ == '__main__':
                 if event.key == pg.K_s:
                     enviro.ajouter_bete()
                     print("Spawn 1 bête")
+                if event.key == pg.K_SPACE:
+                    enviro.bete_focus.split()
 
         if not pause:
             # on ajoute l'arrière-plan à la surface

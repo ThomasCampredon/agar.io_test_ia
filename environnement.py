@@ -1,7 +1,7 @@
 import numpy as np
 import pygame as pg
 import random as rd
-import pygame.gfxdraw
+import secteur
 
 from nourriture import Nourriture
 from bete import Bete
@@ -74,7 +74,7 @@ class Environnement:
         self.bete_focus.origine_repere = pos_screen  # on passe le repère de la fenêtre au joueur
 
         # on affiche la bordure
-        # pg.gfxdraw.rectangle(screen, pg.Rect((0, 0), (self.LARGEUR, self.HAUTEUR)), (255, 255, 255)) # todo mettre dans le bon repère
+        # secteur.draw_rectangle_vide(screen, (255, 255, 255), ) todo à l'occasion mettre dans le bon repère
 
         # on affiche les délimitations des secteurs
         self.afficher_secteurs(screen, pos_screen)

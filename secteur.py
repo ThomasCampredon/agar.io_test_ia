@@ -13,6 +13,20 @@ def pos_point_relatif(x_global, y_global, pos_screen):
     return pos_relative
 
 
+def draw_rectangle_vide(screen, couleur_ligne: tuple, haut_gauche, haut_droite, bas_gauche, bas_droite, largeur_ligne):
+    # ligne haute
+    pg.draw.line(screen, couleur_ligne, haut_gauche, haut_droite, largeur_ligne)
+
+    # ligne basse
+    pg.draw.line(screen, couleur_ligne, bas_gauche, bas_droite, largeur_ligne)
+
+    # ligne droite
+    pg.draw.line(screen, couleur_ligne, haut_droite, bas_droite, largeur_ligne)
+
+    # ligne gauche
+    pg.draw.line(screen, couleur_ligne, haut_gauche, bas_gauche, largeur_ligne)
+
+
 class Secteur(pg.sprite.Sprite):
     def __init__(self, x_min, x_max, y_min, y_max, num_horizontal, num_vertical, *groups: AbstractGroup):
         pg.sprite.Sprite.__init__(self, *groups)
@@ -45,14 +59,4 @@ class Secteur(pg.sprite.Sprite):
         couleur_ligne = (255, 255, 255)
         largeur_ligne = 1
 
-        # ligne haute
-        pg.draw.line(screen, couleur_ligne, haut_gauche, haut_droite, largeur_ligne)
-
-        # ligne basse
-        pg.draw.line(screen, couleur_ligne, bas_gauche, bas_droite, largeur_ligne)
-
-        # ligne droite
-        pg.draw.line(screen, couleur_ligne, haut_droite, bas_droite, largeur_ligne)
-
-        # ligne gauche
-        pg.draw.line(screen, couleur_ligne, haut_gauche, bas_gauche, largeur_ligne)
+        draw_rectangle_vide(screen, couleur_ligne, haut_gauche, haut_droite, bas_gauche, bas_droite, largeur_ligne)
