@@ -156,7 +156,7 @@ class Environnement:
             # pour chaque nourriture qu'on touche
             for i in range(0, len(nourriture_manger)):
                 # si la bete peut encore grossir en mangeant de la nourriture
-                if bete.poids < self.LIMITE_POIDS_MANGER:
+                if bete.poids < self.LIMITE_POIDS_MANGER:  # todo voir pour désactiver les collisions quand le poids >
                     # la bête mange la nourriture
                     bete.manger(nourriture_manger[i])
 

@@ -63,7 +63,6 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         return nourriture_proche
 
     def liste_secteur_collision(self, liste_secteur: dict[(int, int)]) -> set[Secteur]:
-        # todo faire en sorte de prendre les secteurs autours de ceux qu'on collisionne
         liste_collision = set()  # set des secteurs en collision avec la bête
 
         for secteur in liste_secteur.values():
@@ -71,9 +70,28 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
             if pg.sprite.collide_rect(self, secteur):
                 liste_collision.add(secteur)  # on ajoute le secteur à la liste
 
-        # pour chaque secteur
+        # set des secteurs autour de ceux en collisions
+        liste_autour = set()
+
+        # pour chaque secteur en collision
         for secteur in liste_collision:
-            pass
+            # couple (x, y) de coordonnées du secteur
+            index_x = secteur.num_horizontal
+            index_y = secteur.num_vertical
+
+            # pour les abscisses des secteurs à côté (+2, car on exclut la valeur de fin dans le for)
+            for i in range(max(0, index_x - 1), index_x + 2):
+                # pour les ordonnés des secteurs à côté
+                for j in range(max(0, index_y - 1), index_y + 2):
+                    try:
+                        # on rajoute les secteurs autour du secteur
+                        liste_autour.add(liste_secteur[(i, j)])
+                    except KeyError:
+                        pass
+
+        # on ajoute les secteurs autours dans la liste des collisions
+        for secteur_autour in liste_autour:
+            liste_collision.add(secteur_autour)
 
         return liste_collision
 
@@ -114,8 +132,10 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         # nourriture à atteindre
         destination = self.nourriture_la_plus_proche(self.liste_secteur_collision(liste_secteur))
 
-        # on calcule la direction que la bête doit prendre pour atteindre la nourriture
-        self.calculer_direction(destination.pos)
+        # si on a trouvé une destination
+        if destination is not None:
+            # on calcule la direction que la bête doit prendre pour atteindre la nourriture
+            self.calculer_direction(destination.pos)
 
         try:
             # se déplacer vers la destination

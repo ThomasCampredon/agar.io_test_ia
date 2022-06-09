@@ -14,8 +14,10 @@ if __name__ == '__main__':
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pg.time.Clock()
 
-    enviro = Environnement(True, SCREEN_WIDTH, SCREEN_HEIGHT)
+    player = False
+    enviro = Environnement(player, SCREEN_WIDTH, SCREEN_HEIGHT)
     pause = False
+
 
     while running:
         for event in pg.event.get():
@@ -32,7 +34,7 @@ if __name__ == '__main__':
                         pause = False
                         print("Relance")
                 if event.key == pg.K_s:
-                    enviro.ajouter_bete()
+                    enviro.ajouter_bete_aleatoire()
                     print("Spawn 1 bête")
                 if event.key == pg.K_SPACE:
                     enviro.bete_focus.split()
