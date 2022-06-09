@@ -23,7 +23,8 @@ class Environnement:
 
     def __init__(self, joueur=False, largeur_screen=1920, hauteur_screen=1080):
         # pour accélérer les calculs, on sépare le canvas en différent secteur
-        self.secteurs: list[Secteur] = list()
+        # on utilise un dictionnaire pour pouvoir retrouver les secteurs en fonction de leur position
+        self.secteurs: dict[(int, int)] = dict()
         self.generer_secteur()
 
         self.generer_nourriture()
@@ -54,7 +55,7 @@ class Environnement:
     # ================= #
 
     def afficher_nourritures(self, screen, pos_screen: np.ndarray):
-        for secteur in self.secteurs:
+        for secteur in self.secteurs.values():
             for nourriture in secteur.nourritures:
                 nourriture.draw(screen, pos_screen)
 
@@ -63,7 +64,7 @@ class Environnement:
             bete.draw(screen, pos_screen)
 
     def afficher_secteurs(self, screen, pos_screen: np.ndarray):
-        for secteur in self.secteurs:
+        for secteur in self.secteurs.values():
             secteur.draw(screen, pos_screen)
 
     def draw(self, screen):
@@ -101,9 +102,9 @@ class Environnement:
 
         for x in range(0, self.NB_SECTEURS_HORIZONTAL):
             for y in range(0, self.NB_SECTEURS_VERTICAL):
-                self.secteurs.append(Secteur(x * largeur_secteur, (x * largeur_secteur) + largeur_secteur,
-                                             y * hauteur_secteur, (y * hauteur_secteur) + hauteur_secteur,
-                                             x, y))
+                self.secteurs[(x, y)] = Secteur(x * largeur_secteur, (x * largeur_secteur) + largeur_secteur,
+                                                y * hauteur_secteur, (y * hauteur_secteur) + hauteur_secteur,
+                                                x, y)
 
     def generer_nourriture(self) -> None:
         # todo répartir sur le canvas, pas par secteur
@@ -111,7 +112,7 @@ class Environnement:
         largeur_secteur = self.get_largeur_secteur()
         hauteur_secteur = self.get_hauteur_secteur()
 
-        for secteur in self.secteurs:
+        for secteur in self.secteurs.values():
             while len(secteur.nourritures) < nb_nourriture_secteur:
                 secteur.nourritures.add(Nourriture(rd.randint(secteur.x_min, secteur.x_min + largeur_secteur),
                                                    rd.randint(secteur.y_min, secteur.y_min + hauteur_secteur)))
@@ -198,7 +199,7 @@ class Environnement:
         self.generer_nourriture()
 
         # on gère les collisions
-        self.gerer_collisions()  # todo vérifier les collisions avec les bords
+        self.gerer_collisions()
 
         # on fait bouger les bêtes
         self.betes.update(self.secteurs, self.betes)  # todo voir pour utiliser la librairie multiprocessing

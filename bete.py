@@ -62,14 +62,18 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
         return nourriture_proche
 
-    def liste_secteur_collision(self, liste_secteur) -> set[Secteur]:
+    def liste_secteur_collision(self, liste_secteur: dict[(int, int)]) -> set[Secteur]:
         # todo faire en sorte de prendre les secteurs autours de ceux qu'on collisionne
         liste_collision = set()  # set des secteurs en collision avec la bête
 
-        for secteur in liste_secteur:
+        for secteur in liste_secteur.values():
             # si on a collision
             if pg.sprite.collide_rect(self, secteur):
                 liste_collision.add(secteur)  # on ajoute le secteur à la liste
+
+        # pour chaque secteur
+        for secteur in liste_collision:
+            pass
 
         return liste_collision
 
@@ -106,7 +110,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         """
         self.rect.center = (self.x(), self.y())
 
-    def update(self, liste_secteur, liste_bete=None):
+    def update(self, liste_secteur:dict[(int, int)], liste_bete=None):
         # nourriture à atteindre
         destination = self.nourriture_la_plus_proche(self.liste_secteur_collision(liste_secteur))
 
