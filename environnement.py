@@ -14,9 +14,11 @@ class Environnement:
     HAUTEUR = 2000  # hauteur du canvas
     NB_SECTEURS_HORIZONTAL = 20
     NB_SECTEURS_VERTICAL = 10
+    LARGEUR_SECTEUR = LARGEUR // NB_SECTEURS_HORIZONTAL
+    HAUTEUR_SECTEUR = HAUTEUR // NB_SECTEURS_VERTICAL
 
     NB_NOURRITURE = LARGEUR * HAUTEUR // 5000  # nombre de nourritures présentes sur le canvas
-    NB_BETE = 5  # joueur inclus
+    NB_BETE = 15  # joueur inclus
     RATIO_TAILLE_POUR_MANGER = 1.2  # ex : une bête doit être 1.2 fois plus lourde que l'autre pour pouvoir la manger
     VITESSE_BASIQUE = 3  # vitesse de départ des bêtes
     LIMITE_POIDS_MANGER = 400  # limite de poids à laquelle une bête ne grossit plus en mangeant de la nourriture
@@ -89,33 +91,42 @@ class Environnement:
     # ================= #
     # ==     BACK    == # =============================================================================================
     # ================= #
-
-    def get_largeur_secteur(self) -> int:
-        return self.LARGEUR // self.NB_SECTEURS_HORIZONTAL
-
-    def get_hauteur_secteur(self) -> int:
-        return self.HAUTEUR // self.NB_SECTEURS_VERTICAL
-
     def generer_secteur(self) -> None:
-        largeur_secteur = self.get_largeur_secteur()
-        hauteur_secteur = self.get_hauteur_secteur()
-
         for x in range(0, self.NB_SECTEURS_HORIZONTAL):
             for y in range(0, self.NB_SECTEURS_VERTICAL):
-                self.secteurs[(x, y)] = Secteur(x * largeur_secteur, (x * largeur_secteur) + largeur_secteur,
-                                                y * hauteur_secteur, (y * hauteur_secteur) + hauteur_secteur,
+                self.secteurs[(x, y)] = Secteur(x * self.LARGEUR_SECTEUR, (x * self.LARGEUR_SECTEUR) + self.LARGEUR_SECTEUR,
+                                                y * self.HAUTEUR_SECTEUR, (y * self.HAUTEUR_SECTEUR) + self.HAUTEUR_SECTEUR,
                                                 x, y)
 
     def generer_nourriture(self) -> None:
         # todo répartir sur le canvas, pas par secteur
-        nb_nourriture_secteur = self.NB_NOURRITURE // (self.NB_SECTEURS_HORIZONTAL * self.NB_SECTEURS_VERTICAL)
-        largeur_secteur = self.get_largeur_secteur()
-        hauteur_secteur = self.get_hauteur_secteur()
+
+        # nombre de nourritures présentes sur le canvas
+        nb_nourriture = 0
+
+        # pour chaque secteur
+        for secteur in self.secteurs.values():
+            # on ajoute le nombre de nourritures du secteur dans le total
+            nb_nourriture += len(secteur.nourritures)
+
+        # pour chaque nourriture manquante
+        for i in range(0, self.NB_NOURRITURE - nb_nourriture):
+            # nourriture aléatoire
+            nourriture = Nourriture(rd.randint(0, self.LARGEUR-1), rd.randint(0, self.HAUTEUR-1))
+
+            # on trouve les index du secteur auquel la nourriture va appartenir
+            index_secteur_x = int(nourriture.x() // self.LARGEUR_SECTEUR)
+            index_secteur_y = int(nourriture.y() // self.HAUTEUR_SECTEUR)
+
+            # on ajoute la nourriture au secteur
+            self.secteurs[(index_secteur_x, index_secteur_y)].nourritures.add(nourriture)
+
+        """nb_nourriture_secteur = self.NB_NOURRITURE // (self.NB_SECTEURS_HORIZONTAL * self.NB_SECTEURS_VERTICAL)
 
         for secteur in self.secteurs.values():
             while len(secteur.nourritures) < nb_nourriture_secteur:
-                secteur.nourritures.add(Nourriture(rd.randint(secteur.x_min, secteur.x_min + largeur_secteur),
-                                                   rd.randint(secteur.y_min, secteur.y_min + hauteur_secteur)))
+                secteur.nourritures.add(Nourriture(rd.randint(secteur.x_min, secteur.x_min + self.LARGEUR_SECTEUR),
+                                                   rd.randint(secteur.y_min, secteur.y_min + self.HAUTEUR_SECTEUR)))"""
 
     def generer_bete(self) -> None:
         while len(self.betes) < self.NB_BETE - 1:
