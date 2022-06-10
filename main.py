@@ -14,7 +14,7 @@ if __name__ == '__main__':
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pg.time.Clock()
 
-    player = False
+    player = True
     enviro = Environnement(player, SCREEN_WIDTH, SCREEN_HEIGHT)
     pause = False
 

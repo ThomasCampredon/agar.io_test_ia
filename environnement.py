@@ -153,6 +153,11 @@ class Environnement:
                         bete.manger(autre_bete)
                         betes_mangees.append(autre_bete)
 
+                        # si la bete qui se fait manger la bête qu'on suit (ou le joueur)
+                        if autre_bete is self.bete_focus:
+                            # on change la bete qu'on suit
+                            self.bete_focus = bete
+
         # on efface les bêtes qui se sont fait manger
         for dead_bete in betes_mangees:
             self.betes.remove(dead_bete)
