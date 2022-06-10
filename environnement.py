@@ -24,6 +24,9 @@ class Environnement:
     LIMITE_POIDS_MANGER = 400  # limite de poids à laquelle une bête ne grossit plus en mangeant de la nourriture
 
     def __init__(self, joueur=False, largeur_screen=1920, hauteur_screen=1080):
+        self.largeur_screen = largeur_screen
+        self.hauteur_screen = hauteur_screen
+
         # pour accélérer les calculs, on sépare le canvas en différent secteur
         # on utilise un dictionnaire pour pouvoir retrouver les secteurs en fonction de leur position
         self.secteurs: dict[(int, int)] = dict()
@@ -37,15 +40,7 @@ class Environnement:
         self.bete_focus = None
 
         if joueur:
-            joueur = Player(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR), self.VITESSE_BASIQUE)
-
-            # on ajoute un joueur
-            self.betes.add(joueur)
-
-            # on enregistre le joueur pour qu'il soit au centre de l'écran
-            self.bete_focus = joueur
-
-            self.bete_focus.origine_repere = self.pos_repere_screen(largeur_screen, hauteur_screen)
+            self.ajouter_joueur()
         else:
             bete = self.ajouter_bete_aleatoire()
 
@@ -80,7 +75,7 @@ class Environnement:
         # secteur.draw_rectangle_vide(screen, (255, 255, 255), ) todo à l'occasion mettre dans le bon repère
 
         # on affiche les délimitations des secteurs
-        self.afficher_secteurs(screen, pos_screen)
+        # self.afficher_secteurs(screen, pos_screen)
 
         # on affiche les bêtes
         self.afficher_betes(screen, pos_screen)
@@ -99,8 +94,6 @@ class Environnement:
                                                 x, y)
 
     def generer_nourriture(self) -> None:
-        # todo répartir sur le canvas, pas par secteur
-
         # nombre de nourritures présentes sur le canvas
         nb_nourriture = 0
 
@@ -112,7 +105,7 @@ class Environnement:
         # pour chaque nourriture manquante
         for i in range(0, self.NB_NOURRITURE - nb_nourriture):
             # nourriture aléatoire
-            nourriture = Nourriture(rd.randint(0, self.LARGEUR-1), rd.randint(0, self.HAUTEUR-1))
+            nourriture = Nourriture(rd.randint(1, self.LARGEUR-1), rd.randint(1, self.HAUTEUR-1))
 
             # on trouve les index du secteur auquel la nourriture va appartenir
             index_secteur_x = int(nourriture.x() // self.LARGEUR_SECTEUR)
@@ -120,13 +113,6 @@ class Environnement:
 
             # on ajoute la nourriture au secteur
             self.secteurs[(index_secteur_x, index_secteur_y)].nourritures.add(nourriture)
-
-        """nb_nourriture_secteur = self.NB_NOURRITURE // (self.NB_SECTEURS_HORIZONTAL * self.NB_SECTEURS_VERTICAL)
-
-        for secteur in self.secteurs.values():
-            while len(secteur.nourritures) < nb_nourriture_secteur:
-                secteur.nourritures.add(Nourriture(rd.randint(secteur.x_min, secteur.x_min + self.LARGEUR_SECTEUR),
-                                                   rd.randint(secteur.y_min, secteur.y_min + self.HAUTEUR_SECTEUR)))"""
 
     def generer_bete(self) -> None:
         while len(self.betes) < self.NB_BETE - 1:
@@ -137,6 +123,18 @@ class Environnement:
         self.betes.add(bete)
 
         return bete
+
+    def ajouter_joueur(self):
+        # on crée un joueur
+        joueur = Player(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR), self.VITESSE_BASIQUE)
+
+        # on suit ce joueur
+        self.bete_focus = joueur
+
+        # on l'ajoute à la liste de bête de l'environnement
+        self.betes.add(joueur)
+
+        self.bete_focus.origine_repere = self.pos_repere_screen(self.largeur_screen, self.hauteur_screen)
 
     def gerer_collisions_bete_betes(self, bete: Bete) -> None:
         # liste des bêtes qui se sont fait manger par une autre bête

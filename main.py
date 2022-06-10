@@ -1,6 +1,7 @@
 import pygame as pg
 
 from environnement import Environnement
+from player import Player
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -14,10 +15,9 @@ if __name__ == '__main__':
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pg.time.Clock()
 
-    player = True
+    player = False
     enviro = Environnement(player, SCREEN_WIDTH, SCREEN_HEIGHT)
     pause = False
-
 
     while running:
         for event in pg.event.get():
@@ -36,6 +36,12 @@ if __name__ == '__main__':
                 if event.key == pg.K_s:
                     enviro.ajouter_bete_aleatoire()
                     print("Spawn 1 bête")
+                if event.key == pg.K_j:
+                    if not type(enviro.bete_focus) is Player:
+                        enviro.ajouter_joueur()
+                        print("joueur ajouté !")
+                    else:
+                        print("il y a déjà un joueur !")
                 if event.key == pg.K_SPACE:
                     enviro.bete_focus.split()
 

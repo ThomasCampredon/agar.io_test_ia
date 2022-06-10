@@ -10,4 +10,9 @@ _Playliste pour NEAT :_ [vers youtube](https://youtube.com/playlist?list=PLgomWL
 **CLAVIER** :  
 - p : met en pause ou relance le jeu
 - s : générer une nouvelle bête à une position aléatoire
+- j : générer un joueur à une position aléatoire
+- espace : si un joueur est présent, le sépare en deux entités de même taille
+
+**SOURIS**
+- bouger la souris : si un joueur est présent, il suit la souris
     
