@@ -136,6 +136,7 @@ class Environnement:
 
         self.bete_focus.origine_repere = self.pos_repere_screen(self.largeur_screen, self.hauteur_screen)
 
+    # todo mettre à jour (mettre PartieBete en paramètre ?)
     def gerer_collisions_bete_betes(self, bete: Bete) -> None:
         # liste des bêtes qui se sont fait manger par une autre bête
         betes_mangees = []
@@ -160,6 +161,7 @@ class Environnement:
         for dead_bete in betes_mangees:
             self.betes.remove(dead_bete)
 
+    # todo mettre à jour (mettre PartieBete en paramètre ?)
     def gerer_collisions_bete_nourritures(self, bete: Bete) -> None:
         liste_collision = bete.liste_secteur_collision(self.secteurs)
 
@@ -174,6 +176,7 @@ class Environnement:
                     # la bête mange la nourriture
                     bete.manger(nourriture_manger[i])
 
+    # todo mettre à jour (mettre PartieBete en paramètre ?)
     def gerer_collisions_bete_bordures(self, bete) -> None:
         # collision top
         if bete.y() - bete.radius < 0:
