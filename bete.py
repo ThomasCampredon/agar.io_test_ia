@@ -12,7 +12,7 @@ from secteur import Secteur
 from pygame.sprite import AbstractGroup
 
 
-class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
+class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):  # todo enlever ObjetBasique
     """
     Classe pour les bêtes, qui mangent de la nourriture ou d'autre bête
     """
@@ -33,6 +33,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
         # liste des parties de la bête
         self.parties: list[PartieBete] = list()
+        self.parties.append(PartieBete(x, y, vitesse, poids))  # on ajoute une partie
 
         # direction dans laquelle va la bete
         self.direction = np.zeros((2,))
@@ -98,27 +99,18 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         # on transforme le vecteur direction en vecteur unitaire
         self.direction = self.direction / np.linalg.norm(self.direction)
 
-    # TODO mettre à jour
-    def move(self) -> None:
-        # on modifie la position avec la direction et la vitesse en prenant en compte la taille
-        self.pos += self.direction * (self.vitesse - (math.sqrt(self.radius) * 0.08))  # TODO voir si possible d'avoir mieux
-
     def split(self) -> None:
         print("split")
         pass
         # TODO essayer de faire le split()
 
-    # TODO mettre à jour
-    def update_hitbox(self) -> None:
-        """
-        On met à jour la position de la hitbox
-        """
-        self.rect.center = (self.x(), self.y())
-
     # todo gérer_collision entre les parties
+    def gerer_collisions_parties(self):
+        pass
 
     # TODO mettre à jour
-    def update(self, liste_secteur:dict[(int, int)], liste_bete=None):
+    def update(self, liste_secteur: dict[(int, int)], liste_bete=None):
+        # <<<<<<<<<<<<<<<<  todo mettre en place la stratégie
         # nourriture à atteindre
         destination = self.nourriture_la_plus_proche(self.liste_secteur_collision(liste_secteur))
 
@@ -127,14 +119,17 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
             # on calcule la direction que la bête doit prendre pour atteindre la nourriture
             self.calculer_direction(destination.pos)
 
+        # >>>>>>>>>>>>>>>>>
+
         try:
-            # se déplacer vers la destination
-            self.move()
+            # on met à jour les parties
+            for partie in self.parties:
+                partie.update(self.direction)
         except AttributeError:
             pass
 
         # on met à jour la position du carré pour la détection de collision
-        self.update_hitbox()
+        self.gerer_collisions_parties()
 
     # TODO mettre à jour
     def draw(self, screen, pos_screen: np.ndarray):

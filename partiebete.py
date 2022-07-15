@@ -24,6 +24,9 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
         self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
 
+        # booléen pour savoir si on peut re fusionner la partie avec les autres parties
+        self.fusionnable = False
+
         self.image = pg.Surface([self.radius, self.radius])
         self.rect = self.image.get_rect(center=(x, y))
         self.rect.height = self.radius * 2
