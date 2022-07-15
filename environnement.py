@@ -145,52 +145,58 @@ class Environnement:
         for autre_bete in self.betes:
             # si l'autre bête est différente de la bete actuelle
             if autre_bete is not bete:
-                # si la bete est RATIO plus lourde que l'autre bete
-                if bete.poids > self.RATIO_TAILLE_POUR_MANGER * autre_bete.poids:
-                    # voir schemas/bete_mange_bete.png pour les détails
-                    if (bete.distance(autre_bete) + autre_bete.radius) - bete.radius < autre_bete.radius / 2:
-                        bete.manger(autre_bete)
-                        betes_mangees.append(autre_bete)
+                # pour chaque partie de la bete
+                for partie in bete.parties:
+                    # pour chaque partie de l'autre bête
+                    for autre_bete_partie in autre_bete.parties:
+                        # si la bete est RATIO plus lourde que l'autre bete
+                        if partie.poids > self.RATIO_TAILLE_POUR_MANGER * autre_bete_partie.poids:
+                            # voir schemas/bete_mange_bete.png pour les détails
+                            if (partie.distance(autre_bete_partie) + autre_bete_partie.radius) - bete.radius < autre_bete_partie.radius / 2:
+                                partie.manger(autre_bete_partie)
+                                betes_mangees.append(autre_bete)
 
-                        # si la bete qui se fait manger la bête qu'on suit (ou le joueur)
-                        if autre_bete is self.bete_focus:
-                            # on change la bete qu'on suit
-                            self.bete_focus = bete
+                                # si la bete qui se fait manger la bête qu'on suit (ou le joueur)
+                                if autre_bete is self.bete_focus:
+                                    # on change la bete qu'on suit
+                                    self.bete_focus = bete
 
-        # on efface les bêtes qui se sont fait manger
+        # on efface les bêtes qui se sont fait manger si elles n'ont plus de parties
         for dead_bete in betes_mangees:
-            self.betes.remove(dead_bete)
+            if len(dead_bete.parties) < 1:
+                self.betes.remove(dead_bete)
 
     # todo mettre à jour (mettre PartieBete en paramètre ?)
     def gerer_collisions_bete_nourritures(self, bete: Bete) -> None:
         liste_collision = bete.liste_secteur_collision(self.secteurs)
 
         for secteur in liste_collision:
-            # collision entre la bete et les nourritures
-            nourriture_manger = pg.sprite.spritecollide(bete, secteur.nourritures, True)
+            for partie in bete.parties:
+                # collision entre la bete et les nourritures
+                nourriture_manger = pg.sprite.spritecollide(partie, secteur.nourritures, True)
 
-            # pour chaque nourriture qu'on touche
-            for i in range(0, len(nourriture_manger)):
-                # si la bete peut encore grossir en mangeant de la nourriture
-                if bete.poids < self.LIMITE_POIDS_MANGER:  # todo voir pour désactiver les collisions quand le poids >
-                    # la bête mange la nourriture
-                    bete.manger(nourriture_manger[i])
+                # pour chaque nourriture qu'on touche
+                for i in range(0, len(nourriture_manger)):
+                    # si la bete peut encore grossir en mangeant de la nourriture
+                    if bete.poids < self.LIMITE_POIDS_MANGER:  # todo voir pour désactiver les collisions quand poids >
+                        # la bête mange la nourriture
+                        partie.manger(nourriture_manger[i])
 
-    # todo mettre à jour (mettre PartieBete en paramètre ?)
-    def gerer_collisions_bete_bordures(self, bete) -> None:
-        # collision top
-        if bete.y() - bete.radius < 0:
-            bete.pos[1] = bete.radius
-        # collision bottom
-        elif bete.y() + bete.radius > self.HAUTEUR:
-            bete.pos[1] = self.HAUTEUR - bete.radius
+    def gerer_collisions_bete_bordures(self, partie: Bete) -> None:
+        for partie in partie.parties:
+            # collision top
+            if partie.y() - partie.radius < 0:
+                partie.pos[1] = partie.radius
+            # collision bottom
+            elif partie.y() + partie.radius > self.HAUTEUR:
+                partie.pos[1] = self.HAUTEUR - partie.radius
 
-        # collision gauche
-        if bete.x() - bete.radius < 0:
-            bete.pos[0] = bete.radius
-        # collision droite
-        elif bete.x() + bete.radius > self.LARGEUR:
-            bete.pos[0] = self.LARGEUR - bete.radius
+            # collision gauche
+            if partie.x() - partie.radius < 0:
+                partie.pos[0] = partie.radius
+            # collision droite
+            elif partie.x() + partie.radius > self.LARGEUR:
+                partie.pos[0] = self.LARGEUR - partie.radius
 
     def gerer_collisions(self) -> None:
         # pour chaque bête de l'environnement

@@ -24,8 +24,6 @@ class Player(Bete):
             # on calcule la direction dans laquelle va avancer le joueur
             self.calculer_direction(destination)
 
-            # on déplace le joueur
-            self.move()
+            for partie in self.parties:
+                partie.update(self.direction)
 
-            # on met à jour la hitbox
-            self.update_hitbox()
