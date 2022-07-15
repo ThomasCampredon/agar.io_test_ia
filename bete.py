@@ -28,7 +28,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):  # todo enlever ObjetBasi
         ObjetBasique.__init__(self, x, y)
         Mangeable.__init__(self, poids)
 
-        # vitesse de la bête  todo retirer
+        # vitesse de la bête
         self.vitesse = vitesse
 
         # liste des parties de la bête
@@ -53,7 +53,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):  # todo enlever ObjetBasi
 
     def nourriture_la_plus_proche(self, liste_secteur) -> Nourriture:
         nourriture_proche = None  # nourriture la plus proche
-        dist_min = 999999  # distance minimal jusqu'à une nourriture
+        dist_min = 999999  # distance minimale jusqu'à une nourriture
 
         # pour chaque partie de la bête
         for partie in self.parties:
@@ -80,7 +80,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):  # todo enlever ObjetBasi
 
         return liste_collision
 
-    # TODO mettre à jour
+    # TODO mettre à jour ou supprimer
     def manger(self, mangeable: Mangeable) -> None:
         # on prend le poids du mangeable
         self.poids += mangeable.poids
@@ -108,7 +108,6 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):  # todo enlever ObjetBasi
     def gerer_collisions_parties(self):
         pass
 
-    # TODO mettre à jour
     def update(self, liste_secteur: dict[(int, int)], liste_bete=None):
         # <<<<<<<<<<<<<<<<  todo mettre en place la stratégie
         # nourriture à atteindre
@@ -131,15 +130,9 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):  # todo enlever ObjetBasi
         # on met à jour la position du carré pour la détection de collision
         self.gerer_collisions_parties()
 
-    # TODO mettre à jour
     def draw(self, screen, pos_screen: np.ndarray):
-        pos_relative = self.position_relative(pos_screen)
+        # on dessine chaque partie
+        for partie in self.parties:
+            partie.draw(screen, pos_screen)
 
-        pg.gfxdraw.aacircle(screen, int(pos_relative[0]), int(pos_relative[1]), int(self.radius), self.color)
-        pg.gfxdraw.filled_circle(screen, int(pos_relative[0]), int(pos_relative[1]), int(self.radius), self.color)
 
-        # on met le poids en texte
-        font_obj = pygame.font.Font('freesansbold.ttf', 16)
-        text_surface_obj = font_obj.render(str(self.poids), True, "white")
-        text_rect_obj = text_surface_obj.get_rect(center=(pos_relative[0], pos_relative[1]))
-        screen.blit(text_surface_obj, text_rect_obj)
