@@ -22,9 +22,6 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         # vitesse de la partie
         self.vitesse = vitesse
 
-        # direction dans laquelle va la bete
-        self.direction = np.zeros((2,))
-
         self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
 
         self.image = pg.Surface([self.radius, self.radius])
@@ -84,9 +81,9 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         # on met à jour le rayon du cercle en fonction du poids
         self.update_radius()
 
-    def move(self) -> None:
+    def move(self, direction: np.ndarray) -> None:
         # on modifie la position avec la direction et la vitesse en prenant en compte la taille
-        self.pos += self.direction * (
+        self.pos += direction * (
                 self.vitesse - (math.sqrt(self.radius) * 0.08))  # todo voir si possible d'avoir mieux
 
     def update_hitbox(self) -> None:
@@ -100,11 +97,9 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         self.rect.width = self.radius * 2
 
     def update(self, direction: np.ndarray) -> None:
-        self.direction = direction
-
         try:
             # se déplacer vers la destination
-            self.move()
+            self.move(direction)
         except AttributeError:
             pass
 

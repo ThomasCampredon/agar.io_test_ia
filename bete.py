@@ -6,9 +6,10 @@ import math
 from nourriture import Nourriture
 from objetbasique import ObjetBasique
 from mangeable import Mangeable
-from pygame.sprite import AbstractGroup
-
+from partiebete import PartieBete
 from secteur import Secteur
+
+from pygame.sprite import AbstractGroup
 
 
 class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
@@ -27,12 +28,16 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         ObjetBasique.__init__(self, x, y)
         Mangeable.__init__(self, poids)
 
-        # vitesse de la bête
+        # vitesse de la bête  todo retirer
         self.vitesse = vitesse
+
+        # liste des parties de la bête
+        self.parties: list[PartieBete] = list()
 
         # direction dans laquelle va la bete
         self.direction = np.zeros((2,))
 
+        # todo retirer
         self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
 
         self.image = pg.Surface([self.radius, self.radius])
@@ -46,53 +51,31 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
 
     def nourriture_la_plus_proche(self, liste_secteur) -> Nourriture:
-        dist_min = 999999  # distance minimal jusqu'à une nourriture
         nourriture_proche = None  # nourriture la plus proche
+        dist_min = 999999  # distance minimal jusqu'à une nourriture
 
-        for secteur in liste_secteur:
-            # pour chaque nourriture
-            for nourriture in secteur.nourritures:
-                # distance simplifié entre la nourriture et la bête
-                dist = self.distance_manhattan(nourriture)
+        # pour chaque partie de la bête
+        for partie in self.parties:
+            for secteur in liste_secteur:
+                # pour chaque nourriture
+                for nourriture in secteur.nourritures:
+                    # distance simplifié entre la nourriture et la bête
+                    dist = self.distance_manhattan(nourriture)
 
-                # si on a plus proche
-                if dist < dist_min:
-                    dist_min = dist
-                    nourriture_proche = nourriture
+                    # si on a plus proche
+                    if dist < dist_min:
+                        dist_min = dist
+                        nourriture_proche = nourriture
 
         return nourriture_proche
 
-    # TODO mettre à jour ou supprimer
     def liste_secteur_collision(self, liste_secteur: dict[(int, int)]) -> set[Secteur]:
-        liste_collision = set()  # set des secteurs en collision avec la bête
+        liste_collision = set()  # set des secteurs en collision avec les parties de la bête
 
-        for secteur in liste_secteur.values():
-            # si on a collision
-            if pg.sprite.collide_rect(self, secteur):
-                liste_collision.add(secteur)  # on ajoute le secteur à la liste
-
-        # set des secteurs autour de ceux en collisions
-        liste_autour = set()
-
-        # pour chaque secteur en collision
-        for secteur in liste_collision:
-            # couple (x, y) de coordonnées du secteur
-            index_x = secteur.num_horizontal
-            index_y = secteur.num_vertical
-
-            # pour les abscisses des secteurs à côté (+2, car on exclut la valeur de fin dans le for)
-            for i in range(max(0, index_x - 1), index_x + 2):
-                # pour les ordonnés des secteurs à côté
-                for j in range(max(0, index_y - 1), index_y + 2):
-                    try:
-                        # on rajoute les secteurs autour du secteur
-                        liste_autour.add(liste_secteur[(i, j)])
-                    except KeyError:
-                        pass
-
-        # on ajoute les secteurs autours dans la liste des collisions
-        for secteur_autour in liste_autour:
-            liste_collision.add(secteur_autour)
+        # pour chaque partie de la bête
+        for partie in self.parties:
+            # on ajoute les secteurs en collision avec la partie dans la liste des collisions
+            liste_collision.union(partie.liste_secteur_collision(liste_secteur))
 
         return liste_collision
 
