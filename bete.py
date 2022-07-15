@@ -62,6 +62,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
         return nourriture_proche
 
+    # TODO mettre à jour ou supprimer
     def liste_secteur_collision(self, liste_secteur: dict[(int, int)]) -> set[Secteur]:
         liste_collision = set()  # set des secteurs en collision avec la bête
 
@@ -95,6 +96,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
         return liste_collision
 
+    # TODO mettre à jour
     def manger(self, mangeable: Mangeable) -> None:
         # on prend le poids du mangeable
         self.poids += mangeable.poids
@@ -113,21 +115,26 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         # on transforme le vecteur direction en vecteur unitaire
         self.direction = self.direction / np.linalg.norm(self.direction)
 
+    # TODO mettre à jour
     def move(self) -> None:
         # on modifie la position avec la direction et la vitesse en prenant en compte la taille
-        self.pos += self.direction * (self.vitesse - (math.sqrt(self.radius) * 0.08))  # todo voir si possible d'avoir mieux
+        self.pos += self.direction * (self.vitesse - (math.sqrt(self.radius) * 0.08))  # TODO voir si possible d'avoir mieux
 
     def split(self) -> None:
         print("split")
         pass
-        # todo essayer de faire le split()
+        # TODO essayer de faire le split()
 
+    # TODO mettre à jour
     def update_hitbox(self) -> None:
         """
         On met à jour la position de la hitbox
         """
         self.rect.center = (self.x(), self.y())
 
+    # todo gérer_collision entre les parties
+
+    # TODO mettre à jour
     def update(self, liste_secteur:dict[(int, int)], liste_bete=None):
         # nourriture à atteindre
         destination = self.nourriture_la_plus_proche(self.liste_secteur_collision(liste_secteur))
@@ -146,6 +153,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         # on met à jour la position du carré pour la détection de collision
         self.update_hitbox()
 
+    # TODO mettre à jour
     def draw(self, screen, pos_screen: np.ndarray):
         pos_relative = self.position_relative(pos_screen)
 
