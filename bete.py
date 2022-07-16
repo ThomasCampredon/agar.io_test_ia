@@ -12,7 +12,7 @@ from secteur import Secteur
 from pygame.sprite import AbstractGroup
 
 
-class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):  # todo enlever ObjetBasique
+class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
     """
     Classe pour les bêtes, qui mangent de la nourriture ou d'autre bête
     """
@@ -25,7 +25,6 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):  # todo enlever ObjetBasi
 
         # init superclasses
         pg.sprite.Sprite.__init__(self, *groups)
-        ObjetBasique.__init__(self, x, y)
         Mangeable.__init__(self, poids)
 
         # vitesse de la bête
@@ -50,6 +49,23 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):  # todo enlever ObjetBasi
 
     def update_radius(self):
         self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
+
+    def centre(self) -> np.ndarray:
+        """
+        retourne les ccordonnées du point au centre les parties de la bête
+        :return: np.array
+        """
+        centre = np.zeros((2,))  # coordonnées du centre
+
+        # pour chaque partie
+        for partie in self.parties:
+            centre += partie.pos  # on additionne la position de la partie
+
+        # on fait la moyenne des coordonnées
+        centre /= len(self.parties)
+
+        return centre
+
 
     def nourriture_la_plus_proche(self, liste_secteur) -> Nourriture:
         nourriture_proche = None  # nourriture la plus proche
@@ -94,7 +110,7 @@ class Bete(pg.sprite.Sprite, ObjetBasique, Mangeable):  # todo enlever ObjetBasi
 
     def calculer_direction(self, destination: np.ndarray) -> None:
         # vecteur direction vers la destination
-        self.direction = destination - self.pos
+        self.direction = destination - self.pos  #todo
 
         # on transforme le vecteur direction en vecteur unitaire
         self.direction = self.direction / np.linalg.norm(self.direction)

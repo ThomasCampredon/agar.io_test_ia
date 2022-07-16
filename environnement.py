@@ -212,8 +212,10 @@ class Environnement:
         """
         pos_screen = np.zeros((2,))
 
-        pos_screen[0] = self.bete_focus.x() - largeur_screen // 2
-        pos_screen[1] = self.bete_focus.y() - hauteur_screen // 2
+        centre_focus = self.bete_focus.centre()
+
+        pos_screen[0] = centre_focus[0] - largeur_screen // 2
+        pos_screen[1] = centre_focus[1] - hauteur_screen // 2
 
         return pos_screen
 

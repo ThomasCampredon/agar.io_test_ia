@@ -19,8 +19,10 @@ class Player(Bete):
         # on calcule les coordonnées de la destination dans le repere du canvas
         destination = destination + self.origine_repere
 
+        centre_joueur = self.centre()
+
         # si la souris est suffisament éloigner du centre de la bete
-        if math.sqrt(pow(destination[0] - self.x(), 2) + pow(destination[1] - self.y(), 2)) > 30:
+        if math.sqrt(pow(destination[0] - centre_joueur[0], 2) + pow(destination[1] - centre_joueur[1], 2)) > 30:
             # on calcule la direction dans laquelle va avancer le joueur
             self.calculer_direction(destination)
 
