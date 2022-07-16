@@ -17,9 +17,7 @@ class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
     Classe pour les bêtes, qui mangent de la nourriture ou d'autre bête
     """
 
-    RAYON_INITIAL = 15
-
-    def __init__(self, x: int, y: int, vitesse=2, poids: int = 15, *groups: AbstractGroup):
+    def __init__(self, x: int, y: int, couleur: tuple = (0, 200, 125),  vitesse=2, poids: int = 15, *groups: AbstractGroup):
 
         # todo définir une classe stratégie et ses classes filles pour faire varier le update
 
@@ -32,27 +30,16 @@ class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
 
         # liste des parties de la bête
         self.parties: list[PartieBete] = list()
-        self.parties.append(PartieBete(x, y, vitesse, poids))  # on ajoute une partie
+        self.parties.append(PartieBete(x, y, vitesse, poids, couleur))  # on ajoute une partie
 
         # direction dans laquelle va la bete
         self.direction = np.zeros((2,))
 
-        # todo retirer
-        self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
-
-        self.image = pg.Surface([self.radius, self.radius])
-        self.rect = self.image.get_rect(center=(x, y))
-        self.rect.height = self.radius * 2
-        self.rect.width = self.radius * 2
-
-        self.color = (0, 200, 125)
-
-    def update_radius(self):
-        self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
+        self.color = couleur
 
     def centre(self) -> np.ndarray:
         """
-        retourne les ccordonnées du point au centre les parties de la bête
+        Retourne les cordonnées du point au centre des parties de la bête
         :return: np.array
         """
         centre = np.zeros((2,))  # coordonnées du centre
@@ -110,7 +97,7 @@ class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
 
     def calculer_direction(self, destination: np.ndarray) -> None:
         # vecteur direction vers la destination
-        self.direction = destination - self.pos  #todo
+        self.direction = destination - self.centre()
 
         # on transforme le vecteur direction en vecteur unitaire
         self.direction = self.direction / np.linalg.norm(self.direction)

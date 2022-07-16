@@ -119,7 +119,7 @@ class Environnement:
             self.ajouter_bete_aleatoire()
 
     def ajouter_bete_aleatoire(self) -> Bete:
-        bete = Bete(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR), self.VITESSE_BASIQUE)
+        bete = Bete(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR), vitesse=self.VITESSE_BASIQUE)
         self.betes.add(bete)
 
         return bete
@@ -172,7 +172,7 @@ class Environnement:
 
         for secteur in liste_collision:
             for partie in bete.parties:
-                # collision entre la bete et les nourritures
+                # collision entre la bete et les nourritures (on supprime les nourritures en collisions)
                 nourriture_manger = pg.sprite.spritecollide(partie, secteur.nourritures, True)
 
                 # pour chaque nourriture qu'on touche
@@ -181,6 +181,7 @@ class Environnement:
                     if bete.poids < self.LIMITE_POIDS_MANGER:  # todo voir pour désactiver les collisions quand poids >
                         # la bête mange la nourriture
                         partie.manger(nourriture_manger[i])
+
 
     def gerer_collisions_bete_bordures(self, partie: Bete) -> None:
         for partie in partie.parties:

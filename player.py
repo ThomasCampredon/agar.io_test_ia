@@ -7,8 +7,7 @@ import numpy as np
 
 class Player(Bete):
     def __init__(self, x, y, vitesse):
-        Bete.__init__(self, x, y, vitesse)
-        self.color = (200, 128, 10)
+        Bete.__init__(self, x, y, (200, 128, 10), vitesse)
         self.origine_repere = None
 
     def update(self, liste_secteur, liste_bete=None):

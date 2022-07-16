@@ -14,7 +14,7 @@ from pygame.sprite import AbstractGroup
 class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
     RAYON_INITIAL = 15
 
-    def __init__(self, x, y, vitesse, poids, *groups: AbstractGroup):
+    def __init__(self, x, y, vitesse, poids, couleur: tuple, *groups: AbstractGroup):
         ObjetBasique.__init__(self, x, y)
         pg.sprite.Sprite.__init__(self, *groups)
         Mangeable.__init__(self, poids)
@@ -32,7 +32,7 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         self.rect.height = self.radius * 2
         self.rect.width = self.radius * 2
 
-        self.color = (0, 200, 125)
+        self.color = couleur
 
     def update_radius(self):
         """
