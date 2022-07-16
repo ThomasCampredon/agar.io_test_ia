@@ -89,8 +89,10 @@ class Environnement:
     def generer_secteur(self) -> None:
         for x in range(0, self.NB_SECTEURS_HORIZONTAL):
             for y in range(0, self.NB_SECTEURS_VERTICAL):
-                self.secteurs[(x, y)] = Secteur(x * self.LARGEUR_SECTEUR, (x * self.LARGEUR_SECTEUR) + self.LARGEUR_SECTEUR,
-                                                y * self.HAUTEUR_SECTEUR, (y * self.HAUTEUR_SECTEUR) + self.HAUTEUR_SECTEUR,
+                self.secteurs[(x, y)] = Secteur(x * self.LARGEUR_SECTEUR,
+                                                (x * self.LARGEUR_SECTEUR) + self.LARGEUR_SECTEUR,
+                                                y * self.HAUTEUR_SECTEUR,
+                                                (y * self.HAUTEUR_SECTEUR) + self.HAUTEUR_SECTEUR,
                                                 x, y)
 
     def generer_nourriture(self) -> None:
@@ -105,7 +107,7 @@ class Environnement:
         # pour chaque nourriture manquante
         for i in range(0, self.NB_NOURRITURE - nb_nourriture):
             # nourriture aléatoire
-            nourriture = Nourriture(rd.randint(1, self.LARGEUR-1), rd.randint(1, self.HAUTEUR-1))
+            nourriture = Nourriture(rd.randint(1, self.LARGEUR - 1), rd.randint(1, self.HAUTEUR - 1))
 
             # on trouve les index du secteur auquel la nourriture va appartenir
             index_secteur_x = int(nourriture.x() // self.LARGEUR_SECTEUR)
@@ -152,8 +154,15 @@ class Environnement:
                         # si la bete est RATIO plus lourde que l'autre bete
                         if partie.poids > self.RATIO_TAILLE_POUR_MANGER * autre_bete_partie.poids:
                             # voir schemas/bete_mange_bete.png pour les détails
-                            if (partie.distance(autre_bete_partie) + autre_bete_partie.radius) - bete.radius < autre_bete_partie.radius / 2:
+                            if (partie.distance(
+                                    autre_bete_partie) + autre_bete_partie.radius) - partie.radius < autre_bete_partie.radius / 2:
+                                # la partie de la bête 1 mange la partie de l'autre bête
                                 partie.manger(autre_bete_partie)
+
+                                # l'autre bête perd sa partie
+                                autre_bete.parties.remove(autre_bete_partie)
+
+                                # on enregistre la bête qui s'est fait grignoter
                                 betes_mangees.append(autre_bete)
 
                                 # si la bete qui se fait manger la bête qu'on suit (ou le joueur)
@@ -169,6 +178,7 @@ class Environnement:
     # todo mettre à jour (mettre PartieBete en paramètre ?)
     def gerer_collisions_bete_nourritures(self, bete: Bete) -> None:
         liste_collision = bete.liste_secteur_collision(self.secteurs)
+        print(len(liste_collision))
 
         for secteur in liste_collision:
             for partie in bete.parties:
@@ -181,7 +191,7 @@ class Environnement:
                     if bete.poids < self.LIMITE_POIDS_MANGER:  # todo voir pour désactiver les collisions quand poids >
                         # la bête mange la nourriture
                         partie.manger(nourriture_manger[i])
-
+                        print('mangé')
 
     def gerer_collisions_bete_bordures(self, partie: Bete) -> None:
         for partie in partie.parties:

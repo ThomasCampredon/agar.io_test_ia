@@ -17,7 +17,8 @@ class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
     Classe pour les bêtes, qui mangent de la nourriture ou d'autre bête
     """
 
-    def __init__(self, x: int, y: int, couleur: tuple = (0, 200, 125),  vitesse=2, poids: int = 15, *groups: AbstractGroup):
+    def __init__(self, x: int, y: int, couleur: tuple = (0, 200, 125), vitesse=2, poids: int = 15,
+                 *groups: AbstractGroup):
 
         # todo définir une classe stratégie et ses classes filles pour faire varier le update
 
@@ -53,7 +54,6 @@ class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
 
         return centre
 
-
     def nourriture_la_plus_proche(self, liste_secteur) -> Nourriture:
         nourriture_proche = None  # nourriture la plus proche
         dist_min = 999999  # distance minimale jusqu'à une nourriture
@@ -64,7 +64,7 @@ class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
                 # pour chaque nourriture
                 for nourriture in secteur.nourritures:
                     # distance simplifié entre la nourriture et la bête
-                    dist = self.distance_manhattan(nourriture)
+                    dist = partie.distance_manhattan(nourriture)
 
                     # si on a plus proche
                     if dist < dist_min:
@@ -79,21 +79,9 @@ class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
         # pour chaque partie de la bête
         for partie in self.parties:
             # on ajoute les secteurs en collision avec la partie dans la liste des collisions
-            liste_collision.union(partie.liste_secteur_collision(liste_secteur))
+            liste_collision = liste_collision.union(partie.liste_secteur_collision(liste_secteur))
 
         return liste_collision
-
-    # TODO mettre à jour ou supprimer
-    def manger(self, mangeable: Mangeable) -> None:
-        # on prend le poids du mangeable
-        self.poids += mangeable.poids
-
-        # on met à jour le rayon du cercle en fonction du poids
-        self.update_radius()
-
-        # on met à jour la taille du carré pour la détection de collision
-        self.rect.height = self.radius * 2
-        self.rect.width = self.radius * 2
 
     def calculer_direction(self, destination: np.ndarray) -> None:
         # vecteur direction vers la destination
@@ -137,5 +125,3 @@ class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
         # on dessine chaque partie
         for partie in self.parties:
             partie.draw(screen, pos_screen)
-
-
