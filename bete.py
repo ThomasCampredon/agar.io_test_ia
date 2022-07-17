@@ -12,7 +12,7 @@ from secteur import Secteur
 from pygame.sprite import AbstractGroup
 
 
-class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
+class Bete(pg.sprite.Sprite, Mangeable):
     """
     Classe pour les bêtes, qui mangent de la nourriture ou d'autre bête
     """
@@ -90,6 +90,12 @@ class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
         # on transforme le vecteur direction en vecteur unitaire
         self.direction = self.direction / np.linalg.norm(self.direction)
 
+    def update_poids(self):
+        self.poids = 0
+
+        for partie in self.parties:
+            self.poids += partie.poids
+
     def split(self) -> None:
         print("split")
         pass
@@ -118,8 +124,11 @@ class Bete(pg.sprite.Sprite, Mangeable):  # todo enlever Mangeable
         except AttributeError:
             pass
 
-        # on met à jour la position du carré pour la détection de collision
+        # on gère les collisions entre les parties
         self.gerer_collisions_parties()
+
+        # on met à jour le poids de la bête
+        self.update_poids()
 
     def draw(self, screen, pos_screen: np.ndarray):
         # on dessine chaque partie
