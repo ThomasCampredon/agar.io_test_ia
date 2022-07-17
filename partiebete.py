@@ -3,8 +3,8 @@ import numpy as np
 import math
 import pygame.gfxdraw
 
+
 from objetbasique import ObjetBasique
-from nourriture import Nourriture
 from mangeable import Mangeable
 from secteur import Secteur
 
@@ -43,6 +43,7 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
     def liste_secteur_collision(self, liste_secteur: dict[(int, int)]) -> set[Secteur]:
         """
         Donne la liste des secteurs en collision avec la partie
+
         :return: un set de secteur
         """
         set_collision = set()  # set des secteurs en collision avec la bête
@@ -98,6 +99,14 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         # on met à jour la taille du carré pour la détection de collision
         self.rect.height = self.radius * 2
         self.rect.width = self.radius * 2
+
+    def collide(self, partie) -> bool:
+        """
+        Retourne vrai s'il y a collision entre la partie et la partie en paramètre
+
+        :return: bool
+        """
+        return self.distance(partie) < self.radius + partie.radius
 
     def update(self, direction: np.ndarray) -> None:
         try:

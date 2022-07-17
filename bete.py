@@ -2,6 +2,7 @@ import pygame as pg
 import pygame.gfxdraw
 import numpy as np
 import math
+import utilitaires as uti
 
 from nourriture import Nourriture
 from objetbasique import ObjetBasique
@@ -88,12 +89,15 @@ class Bete(pg.sprite.Sprite, Mangeable):
         self.direction = destination - self.centre()
 
         # on transforme le vecteur direction en vecteur unitaire
-        self.direction = self.direction / np.linalg.norm(self.direction)
+        self.direction = uti.vecteur_unitaire(self.direction)
 
-    def update_poids(self):
+    def update_poids(self) -> None:
+        # on reset le poids
         self.poids = 0
 
+        # pour chaque partie
         for partie in self.parties:
+            # on ajoute le poids de la partie au poids total
             self.poids += partie.poids
 
     def split(self) -> None:
@@ -105,7 +109,7 @@ class Bete(pg.sprite.Sprite, Mangeable):
     def gerer_collisions_parties(self):
         pass
 
-    def update(self, liste_secteur: dict[(int, int)], liste_bete=None):
+    def update(self, liste_secteur: dict[(int, int)], liste_bete=None) -> None:
         # <<<<<<<<<<<<<<<<  todo mettre en place la stratégie
         # nourriture à atteindre
         destination = self.nourriture_la_plus_proche(self.liste_secteur_collision(liste_secteur))
@@ -130,7 +134,7 @@ class Bete(pg.sprite.Sprite, Mangeable):
         # on met à jour le poids de la bête
         self.update_poids()
 
-    def draw(self, screen, pos_screen: np.ndarray):
+    def draw(self, screen, pos_screen: np.ndarray) -> None:
         # on dessine chaque partie
         for partie in self.parties:
             partie.draw(screen, pos_screen)

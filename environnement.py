@@ -164,7 +164,7 @@ class Environnement:
                                 # on enregistre la bête qui s'est fait grignoter
                                 betes_mangees.append(autre_bete)
 
-                                # si la bete qui se fait manger la bête qu'on suit (ou le joueur)
+                                # si la bete qui se fait manger est la bête qu'on suit (ou le joueur)
                                 if autre_bete is self.bete_focus:
                                     # on change la bete qu'on suit
                                     self.bete_focus = bete
@@ -189,8 +189,9 @@ class Environnement:
                         # la bête mange la nourriture
                         partie.manger(nourriture_manger[i])
 
-    def gerer_collisions_bete_bordures(self, partie: Bete) -> None:
-        for partie in partie.parties:
+    def gerer_collisions_bete_bordures(self, bete: Bete) -> None:
+        # pour chaque partie de la bête
+        for partie in bete.parties:
             # collision top
             if partie.y() - partie.radius < 0:
                 partie.pos[1] = partie.radius
@@ -214,7 +215,7 @@ class Environnement:
 
     def pos_repere_screen(self, largeur_screen, hauteur_screen) -> np.ndarray:
         """
-        coordonnées de l'origine du repère de la fenêtre par rapport à l'origine
+        Coordonnées de l'origine du repère de la fenêtre par rapport à l'origine
         global (voir schemas/affichage_joueur.drawio.png pour plus de détails)
         """
         pos_screen = np.zeros((2,))
@@ -235,3 +236,6 @@ class Environnement:
 
         # on fait bouger les bêtes
         self.betes.update(self.secteurs, self.betes)  # todo voir pour utiliser la librairie multiprocessing
+
+        # todo pour la version finale ajouter
+        # self.generer_bete()
