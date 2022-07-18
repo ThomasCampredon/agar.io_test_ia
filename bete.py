@@ -106,8 +106,27 @@ class Bete(pg.sprite.Sprite, Mangeable):
         # TODO essayer de faire le split()
 
     # todo gérer_collision entre les parties
-    def gerer_collisions_parties(self):
-        pass
+    def gerer_collisions_parties(self) -> None:
+        """
+        Fait en sorte que les parties d'une bête ne se superposent pas
+        voir schemas/collision_parties.drawio.png pour plus de détails
+        """
+
+        # pour deux parties
+        for i in range(0, len(self.parties)-1):
+            # partie 1
+            p1 = self.parties[i]
+
+            # partie 2
+            p2 = self.parties[i+1]
+
+            # si la partie 1 se superpose à la partie p2
+            if p1.collide(p2):
+                # vecteur entre les centres des parties
+                vect = p2.pos - p1.pos
+
+                # nouveau centre de p2
+                self.parties[i+1].pos = p1.pos + (uti.vecteur_unitaire(vect) * (p1.radius + p2.radius))
 
     def update(self, liste_secteur: dict[(int, int)], liste_bete=None) -> None:
         # <<<<<<<<<<<<<<<<  todo mettre en place la stratégie
