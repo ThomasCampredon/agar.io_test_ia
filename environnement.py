@@ -166,8 +166,10 @@ class Environnement:
 
                                 # si la bete qui se fait manger est la bête qu'on suit (ou le joueur)
                                 if autre_bete is self.bete_focus:
-                                    # on change la bete qu'on suit
-                                    self.bete_focus = bete
+                                    # si la bête qu'on suit n'a plus de partie
+                                    if len(self.bete_focus.parties) < 1:
+                                        # on change la bete qu'on suit par la bête qui l'a mangé
+                                        self.bete_focus = bete
 
         # on efface les bêtes qui se sont fait manger si elles n'ont plus de parties
         for dead_bete in betes_mangees:

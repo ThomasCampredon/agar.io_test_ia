@@ -112,21 +112,24 @@ class Bete(pg.sprite.Sprite, Mangeable):
         voir schemas/collision_parties.drawio.png pour plus de détails
         """
 
-        # pour deux parties
-        for i in range(0, len(self.parties)-1):
-            # partie 1
-            p1 = self.parties[i]
+        # pour chaque partie
+        for i in range(0, len(self.parties) - 1):
+            # pour les autres parties
+            for j in range(i + 1, i + len(self.parties)):
 
-            # partie 2
-            p2 = self.parties[i+1]
+                # partie 1
+                p1 = self.parties[i]
 
-            # si la partie 1 se superpose à la partie p2
-            if p1.collide(p2):
-                # vecteur entre les centres des parties
-                vect = p2.pos - p1.pos
+                # partie 2
+                p2 = self.parties[j % len(self.parties)]
 
-                # nouveau centre de p2
-                self.parties[i+1].pos = p1.pos + (uti.vecteur_unitaire(vect) * (p1.radius + p2.radius))
+                # si la partie 1 se superpose à la partie p2
+                if p1.collide(p2):
+                    # vecteur entre les centres des parties
+                    vect = p2.pos - p1.pos
+
+                    # nouveau centre de p2
+                    self.parties[j % len(self.parties)].pos = p1.pos + (uti.vecteur_unitaire(vect) * (p1.radius + p2.radius))
 
     def update(self, liste_secteur: dict[(int, int)], liste_bete=None) -> None:
         # <<<<<<<<<<<<<<<<  todo mettre en place la stratégie
