@@ -101,11 +101,33 @@ class Bete(pg.sprite.Sprite, Mangeable):
             self.poids += partie.poids
 
     def split(self) -> None:
-        print("split")
-        pass
+        """
+        Sépare la bête en partie égale (ex : 1 partie de 50 → 2 parties de 25)
+        """
+
+        nombre_partie = len(self.parties)
+
+        # on limite le nombre de parties maximum à 4
+        if nombre_partie <= 2:
+            # pour chaque partie de la bête
+            for i in range(0, nombre_partie):
+                # on divise le poids de la partie par 2
+                self.parties[i].poids //= 2
+
+                # partie en cours
+                p1 = self.parties[i]
+
+                # on cherche la position de la nouvelle partie
+                p2_pos = p1.pos + (self.direction * (p1.radius*2))
+
+                # on ajoute une nouvelle partie à la bête
+                self.parties.append(PartieBete(p2_pos[0], p2_pos[1], p1.vitesse, p1.poids, p1.color))
+
         # TODO essayer de faire le split()
 
-    # todo gérer_collision entre les parties
+    def reforme(self):
+        pass  # todo gérer la fusion des parties splitées
+
     def gerer_collisions_parties(self) -> None:
         """
         Fait en sorte que les parties d'une bête ne se superposent pas
@@ -155,6 +177,9 @@ class Bete(pg.sprite.Sprite, Mangeable):
 
         # on met à jour le poids de la bête
         self.update_poids()
+
+        # on regarde si on peut refusioner des parties qui ont été splitées
+        self.reforme()
 
     def draw(self, screen, pos_screen: np.ndarray) -> None:
         # on dessine chaque partie
