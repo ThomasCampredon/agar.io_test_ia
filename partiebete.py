@@ -121,14 +121,19 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
     def draw(self, screen, pos_screen: np.ndarray) -> None:
         pos_relative = self.position_relative(pos_screen)
 
-        # contour du cercle
-        pg.gfxdraw.aacircle(screen, int(pos_relative[0]), int(pos_relative[1]), int(self.radius), self.color)
+        try:
+            # contour du cercle
+            pg.gfxdraw.aacircle(screen, int(pos_relative[0]), int(pos_relative[1]), int(self.radius), self.color)
 
-        # intérieur du cercle
-        pg.gfxdraw.filled_circle(screen, int(pos_relative[0]), int(pos_relative[1]), int(self.radius), self.color)
+            # intérieur du cercle
+            pg.gfxdraw.filled_circle(screen, int(pos_relative[0]), int(pos_relative[1]), int(self.radius), self.color)
+        except ValueError:
+            pass
 
         # on met le poids en texte
         font_obj = pg.font.Font('freesansbold.ttf', 16)
         text_surface_obj = font_obj.render(str(self.poids), True, "white")
         text_rect_obj = text_surface_obj.get_rect(center=(pos_relative[0], pos_relative[1]))
+
+        # on donne les modifications au screen
         screen.blit(text_surface_obj, text_rect_obj)

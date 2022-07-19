@@ -1,7 +1,6 @@
 import numpy as np
 import pygame as pg
 import random as rd
-import secteur
 
 from nourriture import Nourriture
 from bete import Bete
@@ -121,7 +120,14 @@ class Environnement:
             self.ajouter_bete_aleatoire()
 
     def ajouter_bete_aleatoire(self) -> Bete:
-        bete = Bete(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR), vitesse=self.VITESSE_BASIQUE)
+        r1 = rd.randint(10, 240)  # random 1
+        r2 = (r1 + rd.randint(20, 240)) % 240  # random 2
+        r3 = (r2 + rd.randint(20, 240)) % 240  # random 3
+
+        couleur = (r1, r2, r3)
+
+        bete = Bete(rd.randint(0, self.LARGEUR), rd.randint(0, self.HAUTEUR), couleur=couleur,
+                    vitesse=self.VITESSE_BASIQUE)
         self.betes.add(bete)
 
         return bete

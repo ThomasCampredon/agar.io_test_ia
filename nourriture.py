@@ -25,5 +25,8 @@ class Nourriture(pg.sprite.Sprite, ObjetBasique, Mangeable):
     def draw(self, screen, pos_screen: np.ndarray):
         pos_relative = self.position_relative(pos_screen)
 
-        pg.gfxdraw.aacircle(screen, int(pos_relative[0]), int(pos_relative[1]), self.radius, self.color)
-        pg.gfxdraw.filled_circle(screen, int(pos_relative[0]), int(pos_relative[1]), self.radius, self.color)
+        try:
+            pg.gfxdraw.aacircle(screen, int(pos_relative[0]), int(pos_relative[1]), self.radius, self.color)
+            pg.gfxdraw.filled_circle(screen, int(pos_relative[0]), int(pos_relative[1]), self.radius, self.color)
+        except ValueError:
+            pass

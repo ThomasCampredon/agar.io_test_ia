@@ -1,11 +1,9 @@
 import pygame as pg
-import pygame.gfxdraw
 import numpy as np
 import math
 import utilitaires as uti
 
 from nourriture import Nourriture
-from objetbasique import ObjetBasique
 from mangeable import Mangeable
 from partiebete import PartieBete
 from secteur import Secteur
@@ -114,6 +112,9 @@ class Bete(pg.sprite.Sprite, Mangeable):
                 # on divise le poids de la partie par 2
                 self.parties[i].poids //= 2
 
+                # on met à jour le rayon
+                self.parties[i].update_radius()
+
                 # partie en cours
                 p1 = self.parties[i]
 
@@ -130,28 +131,27 @@ class Bete(pg.sprite.Sprite, Mangeable):
 
     def gerer_collisions_parties(self) -> None:
         """
-        Fait en sorte que les parties d'une bête ne se superposent pas
+        Fait en sorte que les parties d'une bête ne se superposent pas (sauf quand elles peuvent se reformer)
         voir schemas/collision_parties.drawio.png pour plus de détails
         """
 
         # pour chaque partie
         for i in range(0, len(self.parties) - 1):
-            # pour les autres parties
-            for j in range(i + 1, i + len(self.parties)):
+            # partie 1
+            p1 = self.parties[i]
+            if not p1.fusionnable:
+                # pour les autres parties
+                for j in range(i + 1, i + len(self.parties)):
+                    # partie 2
+                    p2 = self.parties[j % len(self.parties)]
 
-                # partie 1
-                p1 = self.parties[i]
+                    # si la partie 1 se superpose à la partie p2
+                    if p1.collide(p2):
+                        # vecteur entre les centres des parties
+                        vect = p2.pos - p1.pos
 
-                # partie 2
-                p2 = self.parties[j % len(self.parties)]
-
-                # si la partie 1 se superpose à la partie p2
-                if p1.collide(p2):
-                    # vecteur entre les centres des parties
-                    vect = p2.pos - p1.pos
-
-                    # nouveau centre de p2
-                    self.parties[j % len(self.parties)].pos = p1.pos + (uti.vecteur_unitaire(vect) * (p1.radius + p2.radius))
+                        # nouveau centre de p2
+                        self.parties[j % len(self.parties)].pos = p1.pos + (uti.vecteur_unitaire(vect) * (p1.radius + p2.radius))
 
     def update(self, liste_secteur: dict[(int, int)], liste_bete=None) -> None:
         # <<<<<<<<<<<<<<<<  todo mettre en place la stratégie

@@ -7,6 +7,9 @@ def vecteur_unitaire(vecteur: np.ndarray) -> np.ndarray:
 
     :return: np.ndarray
     """
-    return vecteur / np.linalg.norm(vecteur)
+    if vecteur is not None:
+        return vecteur / np.linalg.norm(vecteur)
+    else:
+        return np.zeros((2,))
 
 
