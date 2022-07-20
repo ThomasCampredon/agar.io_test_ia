@@ -3,7 +3,6 @@ import numpy as np
 import math
 import pygame.gfxdraw
 
-
 from objetbasique import ObjetBasique
 from mangeable import Mangeable
 from secteur import Secteur
@@ -21,6 +20,9 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
         # vitesse de la partie
         self.vitesse = vitesse
+
+        # acceleration
+        self.acceleration = np.zeros((2,))
 
         self.radius = 2 * math.sqrt(self.poids) + self.RAYON_INITIAL
 
@@ -87,8 +89,8 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
 
     def move(self, direction: np.ndarray) -> None:
         # on modifie la position avec la direction et la vitesse en prenant en compte la taille
-        self.pos += direction * (
-                self.vitesse - (math.sqrt(self.radius) * 0.08))  # todo voir si possible d'avoir mieux
+        self.pos += direction * (self.vitesse - (math.sqrt(self.radius) * 0.08)) + self.acceleration   # todo voir si
+        # possible d'avoir mieux
 
     def update_hitbox(self) -> None:
         """
@@ -107,6 +109,12 @@ class PartieBete(pg.sprite.Sprite, ObjetBasique, Mangeable):
         :return: bool
         """
         return self.distance(partie) < self.radius + partie.radius
+
+    def distance_contacte(self, partie) -> float:
+        """
+        Donne la distance entre les borts des deux cercles des parties
+        """
+        return self.distance(partie) - (self.radius + partie.radius)
 
     def update(self, direction: np.ndarray) -> None:
         try:

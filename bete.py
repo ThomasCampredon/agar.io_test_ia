@@ -40,6 +40,7 @@ class Bete(pg.sprite.Sprite, Mangeable):
     def centre(self) -> np.ndarray:
         """
         Retourne les cordonnées du point au centre des parties de la bête
+
         :return: np.array
         """
         centre = np.zeros((2,))  # coordonnées du centre
@@ -121,13 +122,39 @@ class Bete(pg.sprite.Sprite, Mangeable):
                 # on cherche la position de la nouvelle partie
                 p2_pos = p1.pos + (self.direction * (p1.radius*2))
 
+                p2 = PartieBete(p2_pos[0], p2_pos[1], p1.vitesse, p1.poids, p1.color)
+                p2.acceleration += self.direction * 50  # todo faire par palier
+
                 # on ajoute une nouvelle partie à la bête
-                self.parties.append(PartieBete(p2_pos[0], p2_pos[1], p1.vitesse, p1.poids, p1.color))
+                self.parties.append(p2)
 
-        # TODO essayer de faire le split()
+        # TODO prendre en compte la vitesse de lancement (ajouter une acceleration)
 
-    def reforme(self):
+    def reforme(self) -> None:
         pass  # todo gérer la fusion des parties splitées
+
+    def gravite(self) -> None:
+        """
+        Les parties de la bête s'attirent entre elles
+        """
+
+        # pour chaque partie
+        for partie in self.parties:
+            # force d'attraction resultant entre les bêtes
+            force_resultante = np.zeros((2,))
+
+            # pour les autres parties
+            for autre_partie in self.parties:
+                if partie is not autre_partie:
+                    if partie.distance_contacte(autre_partie) > 5:
+                        force = partie.distance_manhattan(autre_partie) * 0.002
+
+                        # vecteur unitaire partant de la partie et pointant vers l'autre partie
+                        vecteur_direction = uti.vecteur_unitaire(autre_partie.pos - partie.pos)
+
+                        force_resultante += vecteur_direction * force
+
+            partie.acceleration = force_resultante
 
     def gerer_collisions_parties(self) -> None:
         """
@@ -177,6 +204,9 @@ class Bete(pg.sprite.Sprite, Mangeable):
 
         # on met à jour le poids de la bête
         self.update_poids()
+
+        # on attire les parties vers le centre
+        self.gravite()
 
         # on regarde si on peut refusioner des parties qui ont été splitées
         self.reforme()

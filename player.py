@@ -34,5 +34,8 @@ class Player(Bete):
         # on met à jour le poids de la bête
         self.update_poids()
 
+        # on attire les parties vers le centre
+        self.gravite()
+
         # on regarde si on peut refusioner des parties qui ont été splitées
         self.reforme()
