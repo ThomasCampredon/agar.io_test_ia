@@ -123,7 +123,7 @@ class Bete(pg.sprite.Sprite, Mangeable):
                 p2_pos = p1.pos + (self.direction * (p1.radius*2))
 
                 p2 = PartieBete(p2_pos[0], p2_pos[1], p1.vitesse, p1.poids, p1.color)
-                p2.acceleration += self.direction * 50  # todo faire par palier
+                p2.acceleration += self.direction * 20  # todo faire par palier
 
                 # on ajoute une nouvelle partie à la bête
                 self.parties.append(p2)
@@ -146,8 +146,8 @@ class Bete(pg.sprite.Sprite, Mangeable):
             # pour les autres parties
             for autre_partie in self.parties:
                 if partie is not autre_partie:
-                    if partie.distance_contacte(autre_partie) > 5:
-                        force = partie.distance_manhattan(autre_partie) * 0.002
+                    if partie.distance_contacte(autre_partie) > 2:
+                        force = partie.distance(autre_partie) * 0.001
 
                         # vecteur unitaire partant de la partie et pointant vers l'autre partie
                         vecteur_direction = uti.vecteur_unitaire(autre_partie.pos - partie.pos)
